@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+
+        #map {
+            height: 100%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        var map, infoWindow;
+
+        // will have to be implemented, basically pull user
+        // address from database and return it as a string
+        function getAddress() {
+            return "111 W Wilson St, Madison WI 53703"
+        }
+
+        // splits address and returns spaces as +.  This is the format for
+        // use in API call
+        function parseAddress(address) {
+            var parsedAddress = address.split(" ");
+            console.log("Array of parts: ", parsedAddress)
+            return apiAddress = parsedAddress.join("+");
+        }
+
+        // Make API call and return response
+        function Get(yourUrl) {
+            var Httpreq = new XMLHttpRequest(); // a new request
+            Httpreq.open("GET", yourUrl, false);
+            Httpreq.send(null);
+            return Httpreq.responseText;
+        }
+
+        // Convert API response to json, return geometry object {lat, lng}
+        function parseLatLon(json) {
+            json = JSON.parse(json)
+            return json.results[0].geometry.location;
+        }
+
+        // Coordinate:
+        //  - Retrieval of user address
+        //  - Making  API call
+        //  - Getting Lat Lon from response and handing it to initMap() in "center:".
+        function getLatLon() {
+            var address = getAddress();
+            var apiKEY = "AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk"
+            var call = "https://maps.googleapis.com/maps/api/geocode/json?address=" + parseAddress(address) + "&key=" + apiKEY
+            var json = Get(call);
+            return latLon = parseLatLon(json);
+        }
+
+        // Sourced from:
+        // https://developers.google.com/maps/documentation/javascript/examples/infowindow-simple
+        function initMap() {
+            var userLocation = getLatLon();
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 16,
+                center: userLocation
+            });
+
+            var contentString = '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h2 id="firstHeading" class="firstHeading">User Home</h2>' +
+                '<div id="bodyContent">' +
+                '<p>Where you live. </p>' +
+                '</div>' +
+                '</div>';
+
+            var infowindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+
+            var marker = new google.maps.Marker({
+                position: userLocation,
+                map: map,
+                title: 'Uluru (Ayers Rock)'
+            });
+            marker.addListener('click', function() {
+                infowindow.open(map, marker);
+            });
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk&callback=initMap"></script>
+</body>
+
+</html>
