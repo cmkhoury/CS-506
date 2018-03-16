@@ -63,5 +63,16 @@ def addUserData():
              return render_template("result.html", msg = msg)
              con.close()
 
+@app.route('/user')
+def user():
+    
+    con = sql.connect("data/test.db")
+    con.row_factory = sql.Row
+
+    cur = con.cursor()
+    cur.execute("select * from User")
+    rows = cur.fetchall()
+    return render_template("user.html",rows = rows)
+
 if __name__ == '__main__':
     app.run(debug = True, threaded=True)
