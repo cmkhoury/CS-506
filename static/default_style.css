@@ -1,0 +1,22 @@
+body {
+    text-align: center;
+    padding:10px;
+}
+
+input[type="file"] {
+    display: inline-block;
+    color: #ebebeb;
+}
+
+form {
+	padding-top: 10px;
+}
+
+td {
+	padding: 10px;
+}
+
+table {
+	padding-top: 40px;
+	display: block;
+}

@@ -1,3 +1,4 @@
+<!-- 
 <!doctype html>
 <html>
 <head>
@@ -12,7 +13,7 @@
 				right:0;
 			}
 	</style>
-<!--          <thead> -->
+<!~~          <thead> ~~>
             <td>UID</td>
             <td>Username</td>
             <td>Password</td>
@@ -21,7 +22,7 @@
 			<td>FirstName</td>
 			<td>LastName</td>
 			<td>OID</td><br>	
-<!--          </thead> -->
+<!~~          </thead> ~~>
          
          {% for row in rows %}
             <tr>
@@ -39,6 +40,55 @@
       </table>
       
      
+      
+   </body>
+</html>
+ -->
+
+<!doctype html>
+<html>
+<head>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap_superhero.min.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}">
+	<style type="text/css">
+			.topcorner{
+				position:absolute;
+				top:0;
+				right:0;
+			}
+	</style>
+</head>
+   <body>
+	<a href = "/logout" class="btn btn-default topcorner">Logout</a>
+      <table border = 1>
+         <thead>
+            <td>UID</td>
+            <td>Username</td>
+            <td>Password</td>
+            <td>Email</td>
+			<td>Address</td>
+			<td>FirstName</td>
+			<td>LastName</td>
+			<td>OID</td><br>			
+         </thead>
+         
+         {% for row in rows %}
+            <tr>
+               <td>{{row["UID"]}}</td>
+               <td>{{row['Username']}}</td> 
+               <td>{{row["Password"]}}</td>
+               <td> {{row['Email']}}</td>
+               <td>{{row["Address"]}}</td>
+               <td>{{row["FirstName"]}}</td>
+               <td>{{row["LastName"]}}</td>
+               <td>{{row["OID"]}}</td>
+            </tr>
+         {% endfor %}
+      </table>
+      
+      <a href = "/">Go back to home page</a>
       
    </body>
 </html>
