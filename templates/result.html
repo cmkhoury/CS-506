@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap_superhero.min.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}">
+	<style type="text/css">
+			.topcorner{
+				position:absolute;
+				top:0;
+				right:0;
+			}
+	</style>
+</head>
+   <body>
+	<a href = "/logout" class="btn btn-default topcorner">Logout</a>
+      <div style="height:20px"></div>
+      Result : {{ msg }}
+      <div style="height:20px"></div>
+      <a href = "/" class="btn btn-default">go back to home page</a>
+   </body>
+</html>

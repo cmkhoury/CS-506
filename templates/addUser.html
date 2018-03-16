@@ -1,0 +1,65 @@
+<html>
+<head>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap_superhero.min.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}">
+	<style type="text/css">
+			.topcorner{
+				position:absolute;
+				top:0;
+				right:0;
+			}
+	</style>
+</head>
+<body>
+
+	<!-- CREATE TABLE User(
+    UID INTEGER PRIMARY KEY,
+    Username TEXT,
+    Password TEXT,
+    Address TEXT,
+    Name TEXT,
+    OID INTEGER,
+    FOREIGN KEY(OID) REFERENCES OrderTable(OID)); -->
+
+	<a href = "/logout" class="btn btn-default topcorner">Logout</a>
+<form action="{{ url_for('addUserData') }}" method="POST">
+    <h3>CartCombo User Information</h3>
+    Username<br>
+    <input type="text" name="username"/></br>
+
+    Password<br>
+    <input type="text" name="password"/></br>
+
+	Email<br>
+	<input type="text" name="email"/></br>
+
+    Address<br>
+    <input type="text" name="aid"/></br>
+
+	First Name<br>
+	<input type="text" name="firstname"/></br>
+
+	Last Name<br>
+	<input type="text" name="lastname"/></br>
+<!--
+    Phone Number<br>
+    <input type="text" name="phoneNumber"/></br> -->
+
+    <!-- User Level<br>
+    <input type="text" name="userLevel"/></br> -->
+
+    <input type="submit" value="submit"/><br>
+</form>
+
+<hr>
+<!-- <h3>Bulk Add</h3>
+<form action="{{ url_for('addUserData') }}" method="POST" enctype="multipart/form-data">
+    <input type=file name=file>
+    <input type="submit" value="Bulk Submit"/><br>
+</form>
+<a href="/downloadexamplefile/users" download>Example File</a> -->
+
+</body>
+</html>

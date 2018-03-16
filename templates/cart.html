@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap_superhero.min.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}">
+	<style type="text/css">
+			.topcorner{
+				position:absolute;
+				top:0;
+				right:0;
+			}
+	</style>
+</head>
+   <body>
+   
+	<a href = "/logout" class="btn btn-default topcorner">Logout</a>
+      <table border = 1>
+         <thead>
+            <td>VIN</td>
+            <td>CTID</td>
+            <td>Mileage</td>
+            <td>Exterior Color</td>
+            <td>Interior Color</td>
+            <td>Transmission</td>
+            <td>ImagePath</td>
+							
+         </thead>
+         
+         {% for row in rows %}
+            <tr>
+               <td>{{row['VIN']}}</td>
+               <td>{{row["CTID"]}}</td>
+               <td>{{row["Mileage"]}}</td>
+               <td>{{row["ExteriorColor"]}}</td>
+               <td>{{row["InteriorColor"]}}</td>
+               <td>{{row["Transmission"]}}</td>
+               <td><img src={{row["ImagePath"]}}> </td>
+            </tr>
+         {% endfor %}
+      </table>
+      
+      <a href = "/">Go back to home page</a>
+      
+   </body>
+</html>
+
