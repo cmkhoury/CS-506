@@ -1,17 +1,23 @@
 <html>
+
 <head>
-	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap_superhero.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap_litera.min.css') }}">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='default_style.css') }}">
 	<style type="text/css">
-			.topcorner{
-				position:absolute;
-				top:0;
-				right:0;
-			}
+		.topcorner {
+			position: absolute;
+			top: 0;
+			right: 0;
+		}
+		.adduser-div {
+	margin: 0 auto;
+	width: 500px;
+}
 	</style>
 </head>
+
 <body>
 
 	<!-- CREATE TABLE User(
@@ -23,43 +29,81 @@
     OID INTEGER,
     FOREIGN KEY(OID) REFERENCES OrderTable(OID)); -->
 
-	<a href = "/logout" class="btn btn-default topcorner">Logout</a>
-<form action="{{ url_for('addUserData') }}" method="POST">
-    <h3>CartCombo User Information</h3>
-    Username<br>
-    <input type="text" name="username"/></br>
+	<a href="/logout" class="btn btn-default topcorner">Logout</a>
+	<div class="adduser-div">
+		<form action="{{ url_for('addUserData') }}" method="POST">
+			<h3>CartCombo User Information</h3>
+			<!-- Username -->
+			<div class="form-group">
+				<label class="col-form-label" for="inputDefault">Username</label>
+				<input type="text" name="username" class="form-control" id="inputDefault" placeholder="Username">
+			</div>
 
-    Password<br>
-    <input type="text" name="password"/></br>
+			<!-- Password -->
+			<div class="form-group">
+				<label for="exampleInputPassword1">Password</label>
+				<input type="text" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+			</div>
 
-	Email<br>
-	<input type="text" name="email"/></br>
+			<!-- Email -->
+			<div class="form-group">
+				<label for="exampleInputEmail1">Email</label>
+				<input type="text" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+				<small id="emailHelp" class="form-text text-muted">Your email will be used for notifications you enable, and won't be shared or distributed.</small>
+			</div>
 
-    Address<br>
-    <input type="text" name="aid"/></br>
+			<!-- Address Grid, first line is full address for now, other fields will be used later -->
+			<div class="form-group">
+				<label for="inputAddress">Address</label>
+				<input type="text" name="aid" class="form-control" id="inputAddress" placeholder="1234 Main St">
+			</div>
+			<div class="form-group">
+				<label for="inputAddress2">Address 2</label>
+				<input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+				<small id="emailHelp" class="form-text text-muted">For now, we'll use the first address line as the entire address.  Later we'll want to break it up so I just added those fields in.  but they dont do anything</small>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="inputCity">City</label>
+					<input type="text" class="form-control" id="inputCity">
+				</div>
+				<div class="form-group col-md-4">
+					<label for="inputState">State</label>
+					<select id="inputState" class="form-control">
+<option selected>...</option>
+<option>California</option>
+<option>Illinois</option>
+<option>Minnesota</option>
+<option>New York</option>
+<option>Oregon</option>
+<option>Washington</option>
+<option>Wisconsin</option>
+</select>
+					<small id="emailHelp" class="form-text text-muted">Only in select US States!</small>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="inputZip">Zip</label>
+					<input type="text" class="form-control" id="inputZip">
+				</div>
+			</div>
 
-	First Name<br>
-	<input type="text" name="firstname"/></br>
+			<!--First Name -->
+			<div class="form-group">
+				<label class="col-form-label" for="inputDefault">First Name</label>
+				<input type="text" name="firstname" class="form-control" placeholder="" id="inputDefault">
+			</div>
 
-	Last Name<br>
-	<input type="text" name="lastname"/></br>
-<!--
-    Phone Number<br>
-    <input type="text" name="phoneNumber"/></br> -->
+			<!-- Last Name<br> -->
+			<div class="form-group">
+				<label class="col-form-label" for="inputDefault">Last Name</label>
+				<input type="text" name="lastname" class="form-control" placeholder="" id="inputDefault">
+			</div>
 
-    <!-- User Level<br>
-    <input type="text" name="userLevel"/></br> -->
+			<input type="submit" value="Submit" class="btn btn-secondary" /><br>
+		</form>
 
-    <input type="submit" value="submit"/><br>
-</form>
-
-<hr>
-<!-- <h3>Bulk Add</h3>
-<form action="{{ url_for('addUserData') }}" method="POST" enctype="multipart/form-data">
-    <input type=file name=file>
-    <input type="submit" value="Bulk Submit"/><br>
-</form>
-<a href="/downloadexamplefile/users" download>Example File</a> -->
-
+		<!-- <hr> -->
+	</div>
 </body>
+
 </html>

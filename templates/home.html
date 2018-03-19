@@ -1,12 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-<title>Page Title</title>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap_superhero.min.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}">
+	<style type="text/css">
+ 		.topcorner{
+   			position:absolute;
+   			top:0;
+   			right:0;
+  		}
+	</style>
 </head>
-<body>
+	<body>
+			<h1>Welcome to CartCombo</h1>
+			<a href = "/logout" class="btn btn-default topcorner">Logout</a>
+			<a href = "/view" class="btn btn-default">Browse</a>
+			<a href = "/search" class="btn btn-default">Search</a>
+			{% if session['is_power'] %}
+			<a href = "/add" class="btn btn-default">Add</a>
+			{% endif %}
 
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
-
-</body>
+	</body>
 </html>
