@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+
+<head>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap_litera.min.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='default_style.css') }}">
+	<style>
+	form {
+		margin: auto;
+		width: 40%;
+	}
+	</style>
+</head>
+<body>
+	<h1>CartCombo</h1>
+	<h5>Login (username is "hello", no password)</h5>
+	<form action="/login" method="POST">
+			<div class="form-group col-md-12">
+				<input type="text" class="form-control" name="username" placeholder="Username" id="inputDefault">
+			</div>
+			<div class="form-group col-md-12">
+				<input type="password" class="form-control" name="password" placeholder="Password" id="inputDefault">
+			</div>
+			<input type="submit" value="Log in" class="btn btn-primary">
+	</form>
+	<br>
+			<a href = "/addUser" class="btn btn-success">New User? Register Here</a>
+</body>
+
+</html>

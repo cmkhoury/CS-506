@@ -12,9 +12,10 @@ global msg
 
 @app.route('/')
 def home():
+   if not session.get('logged_in'):
+      return render_template('login.html')
+   else:
       return render_template('home.html')
-
-
 app.secret_key = os.urandom(12)
 
 @app.route('/addUser')
@@ -65,7 +66,7 @@ def addUserData():
 
 @app.route('/user')
 def user():
-    
+
     con = sql.connect("data/test.db")
     con.row_factory = sql.Row
 
@@ -73,6 +74,41 @@ def user():
     cur.execute("select * from User")
     rows = cur.fetchall()
     return render_template("user.html",rows = rows)
+
+@app.route('/login', methods=['POST'])
+def login():
+   username = request.form['username']
+   password = request.form['password']
+
+   con = sql.connect("data/test.db")
+   con.row_factory = sql.Row
+
+   cur = con.cursor()
+   query = "select * from User where Username=\'" + username + "\'"
+   cur.execute(query)
+
+   rows = cur.fetchall()
+   if len(rows) == 0:
+      return home()
+   elif rows[0]['Password'] == password:
+      session['logged_in'] = True
+      # if rows[0]['UserLevel'] == 'power':
+      #    session['is_power'] = True
+      # elif rows[0]['UserLevel'] == 'regular':
+      #    session['is_regular'] = True
+      return home()
+   else:
+      return home()
+
+@app.route('/logout')
+def logout():
+   # if not session.get('logged_in'):
+   #    return render_template('login.html')
+   # session['is_power'] = False
+   # session['is_regular'] = False
+   session['logged_in'] = False
+   # render_template("logout.html")
+   return render_template("logout.html")
 
 if __name__ == '__main__':
     app.run(debug = True, threaded=True)

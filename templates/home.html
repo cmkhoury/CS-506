@@ -1,26 +1,23 @@
 <!doctype html>
 <html>
 <head>
-	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap_superhero.min.css') }}">
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap_litera.min.css') }}">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}">
 	<style type="text/css">
  		.topcorner{
    			position:absolute;
-   			top:0;
-   			right:0;
+   			top:1%;
+   			right:1%;
   		}
 	</style>
 </head>
 	<body>
 			<h1>Welcome to CartCombo</h1>
-			<a href = "/logout" class="btn btn-default topcorner">Logout</a>
-			<a href = "/view" class="btn btn-default">Browse</a>
-			<a href = "/search" class="btn btn-default">Search</a>
-			{% if session['is_power'] %}
-			<a href = "/add" class="btn btn-default">Add</a>
-			{% endif %}
+			<a href = "/logout" class="btn btn-secondary topcorner">Logout</a>
+			<a href = "/view" class="btn btn-secondary">Browse</a>
+			<a href = "/search" class="btn btn-secondary">Search</a>
 
 	</body>
 </html>
