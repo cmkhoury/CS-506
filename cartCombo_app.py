@@ -26,15 +26,19 @@ def new_user():
     #     return render_template('home.html')
     return render_template('addUser.html')
 
-# CREATE TABLE User(
-#     UID INTEGER PRIMARY KEY,
-#     Username TEXT,
-#     Password TEXT,
-#     Email TEXT,
-#     Address TEXT,
-#     FirstName TEXT,
-#     LastName TEXT,
-#     OID INTEGER,
+#CREATE TABLE User(
+#  UID INTEGER PRIMARY KEY,
+# Username TEXT,
+#   Password TEXT,
+#   Email TEXT,
+#   Address TEXT,
+#   Address2 TEXT,
+#   City Text,
+#   State Text,
+#   Zip Text,
+#  FirstName TEXT,
+#  LastName TEXT,
+#  OID INTEGER);
 
 
 @app.route('/addUserData', methods = ['POST', 'GET'])
@@ -47,13 +51,18 @@ def addUserData():
          username = request.form['username']
          password = request.form['password']
          email = request.form['email']
-         aid = request.form['aid']
+         address = request.form['inputAddress']
+         address2 = request.form['inputAddress2']
+         city = request.form['inputCity']
+         state = request.form['inputState']
+         zipActual = request.form['inputZip']
          firstname = request.form['firstname']
          lastname = request.form['lastname']
 
          with sql.connect("data/test.db") as con:
             cur = con.cursor()
-            cur.execute("INSERT INTO User(Username,Password,Email,Address,FirstName, LastName) VALUES (?,?,?,?,?,?)",(username,password,email,aid,firstname,lastname))
+            cur.execute("INSERT INTO User(Username,Password,Email,Address,Address2,City,State,Zip,FirstName,LastName) VALUES (?,?,?,?,?,?,?,?,?,?)",
+            (username,password,email,address,address2,city,state,zipActual,firstname,lastname))
             con.commit()
             msg = "Record successfully added"
     except Exception as e:

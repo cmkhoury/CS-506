@@ -8,7 +8,7 @@ CREATE TABLE Cart(CID INTEGER PRIMARY KEY, IID INTEGER, Total REAL, SID INTEGER,
                 FOREIGN KEY(SID) REFERENCES Store(SID),
                 FOREIGN KEY(UID) REFERENCES User(UID));
                 
-CREATE TABLE Store(SID INTEGER PRIMARY KEY, Threshold REAL, Address TEXT, OID INTEGER,
+CREATE TABLE Store(SID INTEGER PRIMARY KEY, Threshold REAL, Address TEXT, Address2 TEXT, City Text, State Text, Zip INTEGER, OID INTEGER,
                 FOREIGN KEY(OID) REFERENCES OrderTable(OID));
                 
 CREATE TABLE User(
@@ -17,6 +17,10 @@ CREATE TABLE User(
    Password TEXT,
    Email TEXT,
    Address TEXT,
+   Address2 TEXT,
+   City Text,
+   State Text,
+   Zip Text,
    FirstName TEXT,
    LastName TEXT,
    OID INTEGER);
