@@ -4,6 +4,7 @@ import sqlite3 as sql
 import time
 import datetime
 import pdb
+import helper_function
 app = Flask(__name__)
 lid = 990
 global msg
@@ -49,7 +50,7 @@ def addUserData():
     #     return render_template('home.html')
     try:
          username = request.form['username']
-         password = request.form['password']
+         password = helper_function.encryptPassword(request.form['password'])
          email = request.form['email']
          address = request.form['inputAddress']
          address2 = request.form['inputAddress2']
@@ -95,11 +96,11 @@ def login():
    cur = con.cursor()
    query = "select * from User where Username=\'" + username + "\'"
    cur.execute(query)
-
+   
    rows = cur.fetchall()
    if len(rows) == 0:
       return home()
-   elif rows[0]['Password'] == password:
+   elif helper_function.checkPassword(password.encode(), rows[0]['Password'].encode()):
       session['logged_in'] = True
       # if rows[0]['UserLevel'] == 'power':
       #    session['is_power'] = True
