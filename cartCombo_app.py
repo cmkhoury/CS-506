@@ -4,7 +4,7 @@ import sqlite3 as sql
 import time
 import datetime
 import pdb
-import helper_function
+#import helper_function
 app = Flask(__name__)
 lid = 990
 global msg
