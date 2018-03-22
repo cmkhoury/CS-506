@@ -9,8 +9,6 @@ app = Flask(__name__)
 lid = 990
 global msg
 
-
-
 @app.route('/')
 def home():
    if not session.get('logged_in'):
@@ -18,6 +16,24 @@ def home():
    else:
       return render_template('home.html')
 app.secret_key = os.urandom(12)
+
+@app.route('/map')
+def map():
+    if not session.get('logged_in'):
+       return render_template('login.html')
+
+    con = sql.connect("data/test.db")
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    query = "select * from User where UID=\'" + str(UID) + "\'"
+    cur.execute(query)
+    rows = cur.fetchall()
+
+    if len(rows) == 0:
+       return home()
+    address = "".join([rows[0]['Address'], ",+",rows[0]['City'], ",+",rows[0]['State'], ",+", rows[0]['zip']])
+
+    return render_template('geolocate.html', address = address)
 
 @app.route('/addUser')
 def new_user():
@@ -53,7 +69,6 @@ def addUserData():
          password = helper_function.encryptPassword(request.form['password'])
          email = request.form['email']
          address = request.form['inputAddress']
-         address2 = request.form['inputAddress2']
          city = request.form['inputCity']
          state = request.form['inputState']
          zipActual = request.form['inputZip']
@@ -62,8 +77,8 @@ def addUserData():
 
          with sql.connect("data/test.db") as con:
             cur = con.cursor()
-            cur.execute("INSERT INTO User(Username,Password,Email,Address,Address2,City,State,Zip,FirstName,LastName) VALUES (?,?,?,?,?,?,?,?,?,?)",
-            (username,password,email,address,address2,city,state,zipActual,firstname,lastname))
+            cur.execute("INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES (?,?,?,?,?,?,?,?,?)",
+            (username,password,email,address,city,state,zipActual,firstname,lastname))
             con.commit()
             msg = "Record successfully added"
     except Exception as e:
@@ -83,10 +98,11 @@ def user():
     cur = con.cursor()
     cur.execute("select * from User")
     rows = cur.fetchall()
-    return render_template("user.html",rows = rows)
+    return render_template("user.html", rows = rows)
 
 @app.route('/login', methods=['POST'])
 def login():
+   global UID
    username = request.form['username']
    password = request.form['password']
 
@@ -96,12 +112,14 @@ def login():
    cur = con.cursor()
    query = "select * from User where Username=\'" + username + "\'"
    cur.execute(query)
-   
+
    rows = cur.fetchall()
    if len(rows) == 0:
       return home()
    elif helper_function.checkPassword(password.encode(), rows[0]['Password'].encode()):
       session['logged_in'] = True
+      UID = rows[0]['UID']
+      print("UID: ", UID)
       # if rows[0]['UserLevel'] == 'power':
       #    session['is_power'] = True
       # elif rows[0]['UserLevel'] == 'regular':
