@@ -20,12 +20,6 @@
     <script type="text/javascript">
         var map, infoWindow;
 
-        // pull user address from database and return it as a string
-        function getAddress(address) {
-            console.log(address)
-            return address
-        }
-
         // Make API call and return response
         function Get(yourUrl) {
             var Httpreq = new XMLHttpRequest(); // a new request
@@ -45,7 +39,7 @@
         //  - Making  API call
         //  - Getting Lat Lon from response and handing it to initMap() in "center:".
         function getLatLon() {
-            var address = getAddress('{{address}}');
+            var address = '{{address}}'
             // console.log(address)
             var apiKEY = "AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk"
             var call = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + apiKEY

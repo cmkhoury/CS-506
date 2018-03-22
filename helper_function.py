@@ -30,7 +30,5 @@ def encryptPassword(password):
     return hashed
 
 #check and match the password
-def checkPassword(inputPWD, hasedPWD):
-    if(encryptPassword(inputPWD) == hasedPWD):
-        return True
-    return False
+def checkPassword(inputPWD, hashedPWD):
+    return bcrypt.checkpw(inputPWD, hashedPWD)
