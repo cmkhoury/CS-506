@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Geolocation</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
@@ -8,13 +7,9 @@
     <style>
         /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
-
         #map {
             height: 100%;
         }
-
-        /* Optional: Makes the sample page fill the window. */
-
         html,
         body {
             height: 100%;
@@ -22,26 +17,8 @@
             padding: 0;
         }
     </style>
-</head>
-
-<body>
-    <div id="map"></div>
-    <script>
+    <script type="text/javascript">
         var map, infoWindow;
-
-        // will have to be implemented, basically pull user
-        // address from database and return it as a string
-        function getAddress() {
-            return "111 W Wilson St, Madison WI 53703"
-        }
-
-        // splits address and returns spaces as +.  This is the format for
-        // use in API call
-        function parseAddress(address) {
-            var parsedAddress = address.split(" ");
-            console.log("Array of parts: ", parsedAddress)
-            return apiAddress = parsedAddress.join("+");
-        }
 
         // Make API call and return response
         function Get(yourUrl) {
@@ -62,9 +39,10 @@
         //  - Making  API call
         //  - Getting Lat Lon from response and handing it to initMap() in "center:".
         function getLatLon() {
-            var address = getAddress();
+            var address = '{{address}}'
+            // console.log(address)
             var apiKEY = "AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk"
-            var call = "https://maps.googleapis.com/maps/api/geocode/json?address=" + parseAddress(address) + "&key=" + apiKEY
+            var call = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + apiKEY
             var json = Get(call);
             return latLon = parseLatLon(json);
         }
@@ -100,8 +78,12 @@
                 infowindow.open(map, marker);
             });
         }
+
     </script>
+</head>
+
+<body>
+    <div id="map"></div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk&callback=initMap"></script>
 </body>
-
 </html>
