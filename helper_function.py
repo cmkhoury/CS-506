@@ -19,7 +19,7 @@ def CalculateLeft(line, cost):
 
 #check whether the current cost reach the free shipping line
 def ReachLine(line, cost):
-    if(CalculateLeft(line, cost)<0):
+    if(CalculateLeft(line, cost)<=0):
         return True
     return False
 
