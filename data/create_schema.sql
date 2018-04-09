@@ -42,7 +42,7 @@ CREATE TABLE Invoice(IVID INTEGER PRIMARY KEY, OID INTEGER, Total REAL, UID INTE
                 FOREIGN KEY(ShippingUser) REFERENCES User(UID),
                 FOREIGN KEY(SID) REFERENCES Store(SID));
 
-INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('ckhoury','password','ckhoury@wisc.edu','44 Clay Street','Yonkers','NY','10701','Cam','Khoury');
+/* INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('ckhoury','password','ckhoury@wisc.edu','44 Clay Street','Yonkers','NY','10701','Cam','Khoury');
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('bschwab','password','bschwab@wisc.edu','28 E. Chapel Lane','Nashua','NH','03060','Brad','Schwab');
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('ppape','password','ppape@wisc.edu','14 Griffin Street','New Britain','CT','06051','Phil','Pape');
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('tlarson','password','tlarson@wisc.edu','9714 Jackson Street','Rossville','GA','30741','Tyler','Larson');
@@ -62,3 +62,4 @@ INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastNa
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('bgates','password','bgates@wisc.edu','85 Anderson St.','Beverly','MA','01020','Bill','Gates');
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('dturner','password','dturner@wisc.edu','8 Trenton Ave','Sunnyside','NY','11104','Daniel','Turner');
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('mjohnson','password','mjohnson@wisc.edu','47 Foxrun Street','Henrico','VA','23228','Mark','Johnson');
+*/
