@@ -9,7 +9,7 @@ app = Flask(__name__)
 lid = 990
 global msg
 
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def home():
    if not session.get('logged_in'):
       return render_template('login.html')
@@ -35,7 +35,7 @@ def map():
 
     return render_template('geolocate.html', address = address)
 
-@app.route('/addUser')
+@app.route('/addUser', methods = ['POST', 'GET'])
 def new_user():
     # if not session.get('logged_in'):
     #     return render_template('login.html')
@@ -100,7 +100,7 @@ def user():
     rows = cur.fetchall()
     return render_template("user.html", rows = rows)
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
    global UID
    username = request.form['username']
@@ -125,6 +125,7 @@ def login():
       # elif rows[0]['UserLevel'] == 'regular':
       #    session['is_regular'] = True
       return home()
+
    else:
       return home()
 

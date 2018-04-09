@@ -2,6 +2,7 @@
 <html>
 
 <head>
+	<!-- This is the Login Page -->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap_litera.min.css') }}">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -23,7 +24,7 @@
 			<div class="form-group col-md-12">
 				<input type="password" class="form-control" name="password" placeholder="Password" id="inputDefault">
 			</div>
-			<input type="submit" value="Log in" class="btn btn-primary">
+			<input name="submit" type="submit" value="submit" id="submit" class="btn btn-primary">
 	</form>
 	<br>
 			<a href = "/addUser" class="btn btn-success">New User? Register Here</a>
