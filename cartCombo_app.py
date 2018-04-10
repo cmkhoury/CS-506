@@ -83,7 +83,9 @@ def addUserData():
             msg = "Record successfully added"
     except Exception as e:
              con.rollback()
-             msg = e
+             if (str(e) == "UNIQUE constraint failed: User.Username"):
+                msg = "Username already used, go back to try another username"
+             else: msg = e
 
     finally:
              return render_template("result.html", msg = msg)
