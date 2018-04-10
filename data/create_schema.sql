@@ -13,7 +13,7 @@ CREATE TABLE Store(SID INTEGER PRIMARY KEY, Threshold REAL, Address TEXT, Addres
 
 CREATE TABLE User(
    UID INTEGER PRIMARY KEY,
-   Username TEXT,
+   Username TEXT UNIQUE,
    Password TEXT,
    Email TEXT,
    Address TEXT,

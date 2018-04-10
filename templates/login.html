@@ -8,6 +8,10 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='default_style.css') }}">
 	<style>
+	body {
+		text-align:center;
+		margin:5%;
+		}
 	form {
 		margin: auto;
 		width: 40%;
@@ -25,7 +29,7 @@
 			<div class="form-group col-md-12">
 				<input type="password" class="form-control" name="password" placeholder="Password" id="inputDefault">
 			</div>
-			<input name="submit" type="submit" value="submit" id="submit" class="btn btn-primary">
+			<input name="submit" type="submit" value="Log In" id="submit" class="btn btn-primary">
 	</form>
 	<br>
 	<a href = "/addUser" class="btn btn-success">New User? Register Here</a>

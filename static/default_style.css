@@ -1,4 +1,4 @@
-body {
+/*body {
     text-align: center;
     padding:10px;
 }
@@ -19,4 +19,134 @@ td {
 table {
 	padding-top: 40px;
 	display: block;
+}*/
+
+/* Layout styles -----------------------------------*/
+@media (min-width: 620px) {
+  main {
+    column-count: 2;
+    column-gap: 20px;
+  }
+
+  section {
+    break-inside: avoid;
+  }
+}
+
+@media (min-width: 960px) {
+  main {
+     column-count: 3;
+  }
+}
+
+:root {
+    --darkblue: #34495e;
+    --navy1:#495a80;
+    --navy2:#616f8c;
+    --neutral:#9d9291;
+    --orange1:#c8a17e;
+    --orange2:#ed9845;
+    --darkorange: #df7c18;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+}
+
+.title {
+  font-size: 2.6em;
+  text-align: center;
+  color: white;
+  margin-bottom: 20px
+}
+
+.figure-img {
+  display: block;
+  width: 100%;
+  object: fit;
+}
+
+h2 {
+  font-size: 1.4em;
+  padding: 10px;
+}
+
+p {
+  margin-bottom: 1em;
+  padding: 0 10px;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: .875em;
+  font-weight: 100;
+}
+
+.info-link {
+  text-decoration: none;
+  color: var(--navy2);
+  padding: 10px;
+  display: block;
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 10px;
+  border-top: 3px solid var(--blue);
+  border-radius: 3px;
+  background-color: lightgrey;
+}
+
+.options-link {
+  text-decoration: none;
+  font-size: 0.9em;
+  color: var(--darkblue);
+}
+
+section {
+  border-top: 3px solid var(--navy2);
+  border-radius: 3px;
+  background-color: lightgrey;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.section-img {
+  display: block;
+  padding: 10px;
+  margin: 0 auto;
+}
+
+.bigtitle {
+  padding: 0;
+}
+
+.bigtitle-title {
+  color: white;
+  background-color: var(--navy2);
+  margin-bottom: 10px;
+}
+
+.bigbottom-link {
+  background-color: var(--blue);
+  color: white;
+}
+
+.profile {
+  width: 80%;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 620px) {
+  .options-link {
+    font-size: 1.4em;
+  }
 }

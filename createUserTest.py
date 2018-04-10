@@ -70,7 +70,7 @@ def main():
                 for row in inserted:
                     if row[1] == users[i][0]:  print("Found " +  users[i][0])
 
-                deleted = con.execute("DELETE FROM User WHERE UID = (?)", (102,))
+                deleted = con.execute("DELETE FROM User WHERE Username = (?)", (users[i][0],))
                 if deleted.rowcount > 0: print("Deleted " + users[i][0])
                 else: print("Delete failed")
                 con.commit()

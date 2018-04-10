@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+
+<head>
+    <!-- This is the Home Page -->
+    <title>Dashboard Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap_litera.min.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+
+    <style type="text/css">
+        .title {
+            color: var(--greydark)
+        }
+
+        section,
+        .options {
+            background-color: white;
+            border-top: none;
+        }
+
+        body {
+            font-family: 'Ubuntu', sans-serif;
+        }
+
+        h1 .btn-group {
+            display: inline-block;
+        }
+
+        .btn-group {
+            float: right;
+        }
+
+        .btn-secondary {
+            margin-left: 5%;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body style="background-color: white">
+    <header>
+        <h2>Here's your profile, {{profile[1]}}:
+            <div class="btn-group" style="float: right">
+              <button type="button" class="btn btn-secondary"><a href = "/" style="color: white; text-decoration: none;"><small>Back to Dashboard</small></a>
+              <button type="button" class="btn btn-secondary"><a href = "/logout" style="color: white; text-decoration: none;"><small>Logout</small></a>
+            <div>
+    </h2>
+        <!-- <div class="options">
+            <a href="#" class="options-link link-active">Home</a>
+            <a href="#" class="options-link">About</a>
+            <a href="#" class="options-link">Gallery</a>
+            <a href="#" class="options-link">Blog</a>
+            <a href="#" class="options-link">References</a>
+            <a href="#" class="options-link">Contant</a>
+        </div> -->
+    </header>
+    <!-- profile.append(rows[0]['Username'])
+    profile.append(rows[0]['FirstName'])
+    profile.append(rows[0]['LastName'])
+    profile.append(rows[0]['Email'])
+    profile.append(rows[0]['Address'])
+    profile.append(rows[0]['City'])
+    profile.append(rows[0]['State'])
+    profile.append(rows[0]['zip']) -->
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-4">
+                <div class="card bg-light mb-3" style="background-color: var(--light);">
+                    <div class="card-header" style="background-color: var(--teal1); color: white">Aliases:</div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Username</strong>: {{profile[0]}}<br><strong>First Name</strong>: {{profile[1]}}<br><strong>Last Name</strong>: {{profile[2]}}</p>
+                    </div>
+                </div>
+                <div class="card bg-light mb-3" style="background-color: var(--light);">
+                    <div class="card-header" style="background-color: var(--orange1); color: white">Address:</div>
+                    <div class="card-body">
+                        <p class="card-text">{{profile[4]}}<br>{{profile[5]}}, {{profile[6]}} {{profile[7]}}</p>
+                    </div>
+                </div>
+                <!-- <section> -->
+                <div class="card bg-light mb-3" style="background-color: var(--light);">
+                    <div class="card-header" style="background-color: var(--orange2); color: white">Contact Information:</div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
+                    </div>
+                </div>
+                <!-- </section> -->
+            </div>
+            <!-- </div> -->
+            <!-- <div class="wrapper"> -->
+            <div class="col-8">
+                <!-- <section> -->
+                <div class="card bg-light mb-3" style="background-color: var(--light);">
+                    <div class="card-header" style="background-color: var(--navy2); color: white">Past Orders:</div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
+                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
+                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
+                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
+                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

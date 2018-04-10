@@ -35,6 +35,36 @@ def map():
 
     return render_template('geolocate.html', address = address)
 
+@app.route('/profile')
+def profile():
+    if not session.get('logged_in'):
+       return render_template('login.html')
+
+    con = sql.connect("data/test.db")
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    query = "select * from User where UID=\'" + str(UID) + "\'"
+    cur.execute(query)
+    rows = cur.fetchall()
+
+    # (Username,Password,Email,Address,City,State,Zip,FirstName,LastName)
+
+    if len(rows) == 0:
+       return home()
+
+    profile = [];
+    profile.append(rows[0]['Username'])
+    profile.append(rows[0]['FirstName'])
+    profile.append(rows[0]['LastName'])
+    profile.append(rows[0]['Email'])
+    profile.append(rows[0]['Address'])
+    profile.append(rows[0]['City'])
+    profile.append(rows[0]['State'])
+    profile.append(rows[0]['zip'])
+
+    return render_template('profile.html', profile = profile)
+
+
 @app.route('/addUser', methods = ['POST', 'GET'])
 def new_user():
     # if not session.get('logged_in'):
@@ -83,7 +113,9 @@ def addUserData():
             msg = "Record successfully added"
     except Exception as e:
              con.rollback()
-             msg = e
+             if (str(e) == "UNIQUE constraint failed: User.Username"):
+                msg = "Username already used, go back to try another username"
+             else: msg = e
 
     finally:
              return render_template("result.html", msg = msg)

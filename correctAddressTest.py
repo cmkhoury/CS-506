@@ -11,7 +11,7 @@ def main():
     # Generate fake users with Faker
     users = [];
     fake = Faker()
-    for i in range(0, 1000):
+    for i in range(0, 10):
         individualUser = [];
         someInfo = fake.simple_profile(sex=None) #returns simple profile  (name, email, username)
         individualUser.append(someInfo["username"])
@@ -29,24 +29,22 @@ def main():
         # test_address = tree.xpath("//body/p/strong/text()")
         # print(test_address)
 
-        try:
-            result = session_requests.get("https://fakena.me/random-real-address/")
-            tree = html.fromstring(result.content)
-            test_address = tree.xpath("//body/div/div/p/strong/text()")
-            print(test_address)
-            state = test_address[1].split(",")[1].strip().split(" ")[0]
-            if (state!="WI"): continue;
-            print("In WI")
+        result = session_requests.get("https://fakena.me/random-real-address/")
+        tree = html.fromstring(result.content)
+        test_address = tree.xpath("//body/div/div/p/strong/text()")
+        # print(test_address)
+        # if ("," in test_address[0]): continue;
 
-            city = test_address[1].split(",")[0]
-            if (city!="Madison"): continue;
-            print("In Madison")
+        state = test_address[1].split(",")[1].strip().split(" ")[0]
+        # if (state!="WI"): continue;
+        # print("In WI")
 
-            street_address = test_address[0]
-            zipcode = test_address[1].split(",")[1].strip().split(" ")[1]
+        city = test_address[1].split(",")[0]
+        # if (city != "Madison"): continue;
+        # print("In Madison")
 
-        except Exception as e:
-            print(e)
+        street_address = test_address[0]
+        zipcode = test_address[1].split(",")[1].strip().split(" ")[1]
 
         # Create payload
         payload = {
@@ -61,7 +59,7 @@ def main():
             "inputZip": zipcode,
         }
         # print(payload)
-        print(users[i][2] + ", " + users[i][3] + ", " + users[i][0] + ", " + users[i][1])
+        print("\n" + users[i][2] + ", " + users[i][3] + ", " + users[i][0] + ", " + users[i][1])
         session_requests.post(LOGIN_URL, data = payload, headers = dict(referer = LOGIN_URL))
 
         # Create payload to test login with new user
@@ -88,8 +86,8 @@ def main():
         # print(bucket_names)
         # print(test_address)
 
-        if(test_address in str(bucket_names)): print("Success")
-        else: print("Fail")
+        if(test_address in str(bucket_names)): print("Success - Address on User's Map same as Generated Address")
+        else: print("Fail - Address on User's Map does not match Generated Address")
 
         #Check that new user exists, then delete them
         try:
@@ -99,9 +97,9 @@ def main():
                 for row in inserted:
                     if row[1] == users[i][0]:  print("Found " +  users[i][0])
 
-                # deleted = con.execute("DELETE FROM User WHERE Username = (?)", (users[i][0],))
-                # if deleted.rowcount > 0: print("Deleted " + users[i][0])
-                # else: print("Delete failed")
+                deleted = con.execute("DELETE FROM User WHERE Username = (?)", (users[i][0],))
+                if deleted.rowcount > 0: print("Deleted " + users[i][0])
+                else: print("Delete failed")
                 con.commit()
 
         except Exception as e:
