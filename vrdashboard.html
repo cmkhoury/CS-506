@@ -1,17 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-	<!-- This is the Home Page -->
-    <title>Dashboard Page</title>
-	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap_litera.min.css') }}">
-	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles.css') }}">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-	<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
-	<!-- <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}"> -->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
 
-	<style type="text/css">
+<head>
+    <title>Dashboard Page</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" href="/reset.css"> -->
+    <link rel="stylesheet" type="text/css" href="static/bootstrap_litera.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style type="text/css">
         .title {
             color: var(--greydark)
         }
@@ -24,6 +23,7 @@
         body {
             background-color: var(--blue);
             font-family: 'Ubuntu', sans-serif;
+            color: #34495e;
         }
 
         h1 .btn-group {
@@ -60,7 +60,7 @@
             <a href="/browse" style="color: var(--darkblue); text-decoration: none;">
             <h2 class="bigtitle-title" style="background-color: var(--navy1)">Browse for Other Users</h2>
             <p>Map and List of nearby users to collaborate with.</p>
-            <img class="section-img" src="../images/browse.png" width="140" alt="important graph">
+            <img class="section-img" src="images/browse.png" width="140" alt="important graph">
             <br>
         </a>
         </section>
@@ -73,7 +73,7 @@
             <a href="/view" style="color: var(--darkblue); text-decoration: none;">
             <h2 class="bigtitle-title">View My Profile</h2>
             <p>Check out your account information, shipping address, and past orders.</p>
-            <img class="section-img" src="../images/home.png" width="140" alt="important graph"/>
+            <img class="section-img" src="images/home.png" width="140">
             <br>
         </a>
         </section>
@@ -86,7 +86,7 @@
             <a href="/map" style="color: var(--darkblue); text-decoration: none;">
             <h2  class="bigtitle-title" style="background-color: var(--orange1);">View my Location</h2>
             <p>Map of your account address.</p>
-            <img class="section-img" src="../images/locate.png" width="140" alt="important graph">
+            <img class="section-img" src="images/locate.png" width="140" alt="important graph">
             <br>
         </a>
         </section>
