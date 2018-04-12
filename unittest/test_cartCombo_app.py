@@ -34,6 +34,19 @@ class test_cartCombo_app(TestCase):
             data = {}, 
             follow_redirects = True)
 
+    def addUserData(self, username, password, email, inputAddress, inputCity, inputState, inputZip, firstname, lastname):
+        return self.app.post('/addUserData', data = {
+            'username' : username,
+            'password' : password,
+            'email' : email,
+            'inputAddress' : inputAddress,
+            'inputCity' : inputCity,
+            'inputState' : inputState,
+            'inputZip' : inputZip,
+            'firstname' : firstname,
+            'lastname' : lastname
+        }, follow_redirects=True)
+
     ''' test functions '''
 
     def test_single_valid_login(self):
@@ -85,7 +98,29 @@ class test_cartCombo_app(TestCase):
         rv = self.app.get('/profile')
         self.assertIn("This is the Login Page", rv.data)
 
+    def test_valid_login_user(self):
+        rv = self.login('hello','')
+        rv = self.app.get('/user')
+        self.assertIn("This is the User Page", rv.data)
+        rv = self.logout()
 
+    def test_valid_login_user(self):
+        rv = self.login('hello','')
+        rv = self.app.get('/user')
+        self.assertIn("This is the User Page", rv.data)
+        rv = self.logout()
+
+    def test_valid_login_addUser(self):
+        rv = self.login('hello','')
+        rv = self.app.get('/addUser')
+        self.assertIn("This is the AddUser Page", rv.data)
+        rv = self.logout()
+
+    def test_valid_login_addUserData(self):
+        rv = self.login('hello','')
+        rv = self.addUserData('TestUserUniqueUnique', 'TestPasswordUniqueUnique', 'TestEmail@unique.com', '123 Unique Street', 'Madison', 'Wisconsin', '53715', 'TestFirstname', 'TestLastname')
+        self.assertIn("Record successfully added", rv.data)
+        rv = self.logout()
 
     '''def test_home_login(self):
         with self.app.test_client().session_transaction() as sess:
