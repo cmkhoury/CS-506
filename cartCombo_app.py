@@ -8,6 +8,7 @@ import helper_function
 app = Flask(__name__)
 lid = 990
 global msg
+db = "data/test.db"
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
@@ -22,7 +23,7 @@ def map():
     if not session.get('logged_in'):
        return render_template('login.html')
 
-    con = sql.connect("data/test.db")
+    con = sql.connect(db)
     con.row_factory = sql.Row
     cur = con.cursor()
     query = "select * from User where UID=\'" + str(UID) + "\'"
@@ -138,7 +139,7 @@ def login():
    username = request.form['username']
    password = request.form['password']
 
-   con = sql.connect("data/test.db")
+   con = sql.connect(db)
    con.row_factory = sql.Row
 
    cur = con.cursor()
@@ -151,7 +152,7 @@ def login():
    elif helper_function.checkPassword(password.encode(), rows[0]['Password'].encode()):
       session['logged_in'] = True
       UID = rows[0]['UID']
-      print("UID: ", UID)
+      #print("UID: ", UID)
       # if rows[0]['UserLevel'] == 'power':
       #    session['is_power'] = True
       # elif rows[0]['UserLevel'] == 'regular':

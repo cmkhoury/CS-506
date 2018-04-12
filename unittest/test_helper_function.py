@@ -14,7 +14,7 @@ class test_helper_function(unittest.TestCase):
         self.assertEqual(round(helper_function.CalculateLeft(13.6, 4.7),1), 8.9)
 
     def testReachLineTrue(self):
-        self.assertTrue(helper_function.ReachLine(1, 3))
+        self.assertFalse(helper_function.ReachLine(1, 3))
 
     def testReachLineFalse(self):
         self.assertFalse(helper_function.ReachLine(3, 1))
