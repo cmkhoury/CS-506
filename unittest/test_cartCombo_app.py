@@ -61,6 +61,30 @@ class test_cartCombo_app(TestCase):
         #print rv.data
         self.assertIn("This is the Login Page", rv.data)
 
+    def test_valid_login_map(self):
+        rv = self.login('hello','')
+        rv = self.app.get('/map')
+        self.assertIn("This is the Map Page", rv.data)
+        rv = self.logout()
+
+    def test_invalid_login_map(self):
+        rv = self.login('hello','')
+        rv = self.logout()
+        rv = self.app.get('/map')
+        self.assertIn("This is the Login Page", rv.data)
+
+    def test_valid_login_profile(self):
+        rv = self.login('hello','')
+        rv = self.app.get('/profile')
+        self.assertIn("This is the Profile Page", rv.data)
+        rv = self.logout()
+
+    def test_invalid_login_profile(self):
+        rv = self.login('hello','')
+        rv = self.logout()
+        rv = self.app.get('/profile')
+        self.assertIn("This is the Login Page", rv.data)
+
 
 
     '''def test_home_login(self):

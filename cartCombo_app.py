@@ -41,7 +41,7 @@ def profile():
     if not session.get('logged_in'):
        return render_template('login.html')
 
-    con = sql.connect("data/test.db")
+    con = sql.connect(db)
     con.row_factory = sql.Row
     cur = con.cursor()
     query = "select * from User where UID=\'" + str(UID) + "\'"
@@ -106,7 +106,7 @@ def addUserData():
          firstname = request.form['firstname']
          lastname = request.form['lastname']
 
-         with sql.connect("data/test.db") as con:
+         with sql.connect(db) as con:
             cur = con.cursor()
             cur.execute("INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES (?,?,?,?,?,?,?,?,?)",
             (username,password,email,address,city,state,zipActual,firstname,lastname))
@@ -125,7 +125,7 @@ def addUserData():
 @app.route('/user')
 def user():
 
-    con = sql.connect("data/test.db")
+    con = sql.connect(db)
     con.row_factory = sql.Row
 
     cur = con.cursor()
