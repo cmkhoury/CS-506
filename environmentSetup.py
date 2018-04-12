@@ -7,3 +7,4 @@ import os
 
 os.system("pip install Flask")
 os.system("pip install bcrypt")
+os.system("pip install faker")

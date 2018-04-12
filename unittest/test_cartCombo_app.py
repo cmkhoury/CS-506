@@ -3,9 +3,7 @@ from unittest import TestCase
 import sys
 sys.path.append("..")
 import cartCombo_app
-#from flask_testing import TestCase
 import flask
-import urllib2
 from flask import session
 import tempfile
 
@@ -120,6 +118,7 @@ class test_cartCombo_app(TestCase):
         rv = self.login('hello','')
         rv = self.addUserData('TestUserUniqueUnique', 'TestPasswordUniqueUnique', 'TestEmail@unique.com', '123 Unique Street', 'Madison', 'Wisconsin', '53715', 'TestFirstname', 'TestLastname')
         self.assertIn("Record successfully added", rv.data)
+        #a userData delete is needed
         rv = self.logout()
 
     '''def test_home_login(self):
