@@ -5,10 +5,10 @@ import time
 import datetime
 import pdb
 import helper_function
+import json
 app = Flask(__name__)
 lid = 990
 global msg
-db = "data/test.db"
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
@@ -23,7 +23,7 @@ def map():
     if not session.get('logged_in'):
        return render_template('login.html')
 
-    con = sql.connect(db)
+    con = sql.connect("data/test.db")
     con.row_factory = sql.Row
     cur = con.cursor()
     query = "select * from User where UID=\'" + str(UID) + "\'"
@@ -41,7 +41,7 @@ def profile():
     if not session.get('logged_in'):
        return render_template('login.html')
 
-    con = sql.connect(db)
+    con = sql.connect("data/test.db")
     con.row_factory = sql.Row
     cur = con.cursor()
     query = "select * from User where UID=\'" + str(UID) + "\'"
@@ -106,7 +106,7 @@ def addUserData():
          firstname = request.form['firstname']
          lastname = request.form['lastname']
 
-         with sql.connect(db) as con:
+         with sql.connect("data/test.db") as con:
             cur = con.cursor()
             cur.execute("INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES (?,?,?,?,?,?,?,?,?)",
             (username,password,email,address,city,state,zipActual,firstname,lastname))
@@ -125,7 +125,7 @@ def addUserData():
 @app.route('/user')
 def user():
 
-    con = sql.connect(db)
+    con = sql.connect("data/test.db")
     con.row_factory = sql.Row
 
     cur = con.cursor()
@@ -133,13 +133,27 @@ def user():
     rows = cur.fetchall()
     return render_template("user.html", rows = rows)
 
+@app.route('/carts')
+def carts():
+
+    con = sql.connect("data/test.db")
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    currentUser = session.get('username')
+    query = "SELECT * FROM Cart INNER JOIN User ON Cart.UID=User.UID WHERE Username = \'" + currentUser + "\'"
+    cur.execute(query)
+    rows = cur.fetchall()
+    return render_template("carts.html", rows = rows)
+
+
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
    global UID
    username = request.form['username']
    password = request.form['password']
 
-   con = sql.connect(db)
+   con = sql.connect("data/test.db")
    con.row_factory = sql.Row
 
    cur = con.cursor()
@@ -151,8 +165,9 @@ def login():
       return home()
    elif helper_function.checkPassword(password.encode(), rows[0]['Password'].encode()):
       session['logged_in'] = True
+      session['username'] = username
       UID = rows[0]['UID']
-      #print("UID: ", UID)
+      print("UID: ", UID)
       # if rows[0]['UserLevel'] == 'power':
       #    session['is_power'] = True
       # elif rows[0]['UserLevel'] == 'regular':
@@ -171,6 +186,49 @@ def logout():
    session['logged_in'] = False
    # render_template("logout.html")
    return render_template("logout.html")
+
+@app.route('/searchPartner')
+def searchPartner():
+  return render_template("searchPartner.html")
+
+@app.route('/api/searchPartner') #?name = "XXX"
+def searchPartner_api():
+ 
+  con = sql.connect("data/test.db")
+  con.row_factory = sql.Row
+  cur = con.cursor()
+  name = request.args.get('name');
+  query = "select * from User WHERE Username LIKE \'%" + str(name) + "%\' OR FirstName LIKE \'%" + str(name) + "%\' OR LastName LIKE \'%" + str(name) + "%\'"
+  cur.execute(query)
+  rows = cur.fetchall()
+  results = list()
+  for x in range(0, len(rows)): 
+    user = dict()
+    user["email"] = rows[x]['email'];
+    user["username"] = rows[x]['username'];
+    user["address"] = rows[x]['address'];
+    user["city"] = rows[x]['city'];
+    user["state"] = rows[x]['state'];
+    user["zip"] = rows[x]['zip'];
+    user["firstname"] = rows[x]['firstname'];
+    user["lastname"] = rows[x]['lastname'];
+    results.append(user)
+
+
+  #if len(rows) == 0:
+  
+  return json.dumps(results);
+
+@app.route('/api/hasUsername') #?username = "XXX"
+def hasUsername_api():
+  con = sql.connect("data/test.db")
+  con.row_factory = sql.Row
+  cur = con.cursor()
+  name = request.args.get('username');
+  query = "select * from User WHERE Username = \'"+ str(name) + "\'"
+  cur.execute(query)
+  rows = cur.fetchall()
+  return json.dumps(len(rows) != 0);
 
 if __name__ == '__main__':
     app.run(debug = True, threaded=True)

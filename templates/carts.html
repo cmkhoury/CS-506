@@ -32,36 +32,24 @@
 </script>
 <body>
 	<a href="/logout" class="btn btn-default topcorner">Logout</a><br>
-	<table id="users" class="table table-striped table-bordered" style="width:100%">
+	<table id="carts" class="table table-striped table-bordered" style="width:100%">
 		<thead>
 			<tr>
+				<th scope="col">CID</th>
+				<th scope="col">IID</th>
+				<th scope="col">SID</th>
 				<th scope="col">UID</th>
-				<th scope="col">Username</th>
-				<th scope="col">Password</th>
-				<th scope="col">Email</th>
-				<th scope="col">Address</th>
-				<th scope="col">City</th>
-				<th scope="col">State</th>
-				<th scope="col">ZIP</th>
-				<th scope="col">FirstName</th>
-				<th scope="col">LastName</th>
-				<th scope="col">OID</th>
+				<th scope="col">Total</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for row in rows %}
 			<tr>
-				<td>{{row["UID"]}}</td>
-				<td>{{row['Username']}}</td>
-				<td>{{row["Password"]}}</td>
-				<td> {{row['Email']}}</td>
-				<td>{{row["Address"]}}</td>
-				<td>{{row["City"]}}</td>
-				<td>{{row["State"]}}</td>
-				<td>{{row["Zip"]}}</td>
-				<td>{{row["FirstName"]}}</td>
-				<td>{{row["LastName"]}}</td>
-				<td>{{row["OID"]}}</td>
+				<td>{{row["CID"]}}</td>
+				<td>{{row['IID']}}</td>
+				<td>{{row["SID"]}}</td>
+				<td>{{row['UID']}}</td>
+				<td>{{row["Total"]}}</td>
 			</tr>
 			{% endfor %}
 		</tbody>

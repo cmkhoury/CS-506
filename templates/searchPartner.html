@@ -1,0 +1,52 @@
+<html ng-app="SearchPartnerApp">
+	<head>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="{{ url_for('static',filename='js/jquery-3.3.1.min.js') }}"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+		<script>
+			angular.module("SearchPartnerApp", [])
+			.controller('MainController', function($scope, $http) {
+				$scope.partners = [];
+
+				$scope.searchPartners = function(name){
+					$http({
+					  method: 'GET',
+					  url: '/api/searchPartner?name='+name
+					}).then(function successCallback(response) {
+						$scope.partners = response.data;
+					    console.log(response.data)
+					  }, function errorCallback(response) {
+					    alert("error")
+					  });
+				}
+			});
+		</script>
+	</head>
+	<body ng-controller="MainController" style="padding:20px;">
+		<div class="well">
+			<div class="form-group">
+		    	<input type="text" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter the username" ng-model="name" ng-change="searchPartners(name)">
+	  		</div>
+	  	</div>
+
+	  		<div class="panel panel-primary">
+			  <div class="panel-heading">List of Partners</div>
+			  <div class="panel-body">
+			    <div ng-repeat="partner in partners">
+	  				<h4>{{'{{partner.firstname}}'}} {{'{{partner.lastname}}'}}</h4>
+	  				<div><strong>Email: </strong>{{'{{partner.email}}'}} </div>
+	  				<div><strong>Username: </strong>{{'{{partner.username}}'}} </div>
+	  				<div><strong>Address: </strong>{{'{{partner.address}}'}} {{'{{partner.city}}'}}, {{'{{partner.state}}'}}<br/>{{'{{partner.zip}}'}} </div>
+	  				<hr/>
+	  			</div>
+			  </div>
+			</div>
+
+
+	  		
+		
+		
+		
+	</body>
+</html>
