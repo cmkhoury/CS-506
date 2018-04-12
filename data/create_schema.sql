@@ -53,7 +53,7 @@ CREATE TABLE userOrder(
                 FOREIGN KEY(user_id) REFERENCES User(UID) ON DELETE CASCADE,
                 FOREIGN KEY(order_id) REFERENCES OrderTable(OID) ON DELETE CASCADE
 );
-
+/*
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('ckhoury','','ckhoury@wisc.edu','44 Clay Street','Yonkers','NY','10701','Cam','Khoury');
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('bschwab','','bschwab@wisc.edu','28 E. Chapel Lane','Nashua','NH','03060','Brad','Schwab');
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('ppape','','ppape@wisc.edu','14 Griffin Street','New Britain','CT','06051','Phil','Pape');
@@ -74,7 +74,7 @@ INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastNa
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('bgates','','bgates@wisc.edu','85 Anderson St.','Beverly','MA','01020','Bill','Gates');
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('dturner','','dturner@wisc.edu','8 Trenton Ave','Sunnyside','NY','11104','Daniel','Turner');
 INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES ('mjohnson','','mjohnson@wisc.edu','47 Foxrun Street','Henrico','VA','23228','Mark','Johnson');
-
+*/
 INSERT INTO Cart(IID , Total , SID , UID ) VALUES ('1', '128', '1', '1');
 INSERT INTO Cart(IID , Total , SID , UID ) VALUES ('2', '256', '2', '1');
 INSERT INTO Cart(IID , Total , SID , UID ) VALUES ('3', '512', '3', '2');
