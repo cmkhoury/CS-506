@@ -53,17 +53,36 @@ def profile():
     if len(rows) == 0:
        return home()
 
-    profile = [];
-    profile.append(rows[0]['Username'])
-    profile.append(rows[0]['FirstName'])
-    profile.append(rows[0]['LastName'])
-    profile.append(rows[0]['Email'])
-    profile.append(rows[0]['Address'])
-    profile.append(rows[0]['City'])
-    profile.append(rows[0]['State'])
-    profile.append(rows[0]['zip'])
+    profile = dict();
+    profile['username']= rows[0]['Username']
+    profile['firstname']= rows[0]['FirstName']
+    profile['lastname'] = rows[0]['LastName']
+    profile['email'] = rows[0]['Email']
+    profile['address'] = rows[0]['Address']
+    profile['city'] = rows[0]['City']
+    profile['state'] = rows[0]['State']
+    profile['zip'] = rows[0]['zip']
 
-    return render_template('profile.html', profile = profile)
+    query = "SELECT Cart.CID AS 'CartID',Cart.Total AS 'Total',Item.IID AS 'ItemID',Item.Price AS 'Price', Item.Quantity AS 'Quantity' FROM Cart INNER JOIN CartItem ON Cart.CID = CartItem.CID INNER JOIN Item ON CartItem.IID = Item.IID WHERE UID = \'" + str(UID) + "\'"
+    cur.execute(query)
+    rows = cur.fetchall()
+
+    listOfCarts = [];
+    listofItems = [];
+
+    for x in range(0, len(rows)):
+      cart = dict()
+      cart['cartID'] = rows[x]['CartID']
+      cart['total'] = rows[x]['total']
+      if(cart not in listOfCarts): listOfCarts.append(cart)
+      item = dict()
+      item['cartID'] = rows[x]['CartID']
+      item['itemID'] = rows[x]['ItemID']
+      item['price'] = rows[x]['Price']
+      item['quantity'] = rows[x]['Quantity']
+      if(item not in listofItems): listofItems.append(item)
+
+    return render_template('profile.html', profile = profile, listOfItems = listofItems, listOfCarts = listOfCarts, numItemss = len(listofItems))
 
 
 @app.route('/addUser', methods = ['POST', 'GET'])

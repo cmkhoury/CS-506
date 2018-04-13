@@ -81,20 +81,20 @@
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
                     <div class="card-header" style="background-color: var(--teal1); color: white">Aliases:</div>
                     <div class="card-body">
-                        <p class="card-text"><strong>Username</strong>: {{profile[0]}}<br><strong>First Name</strong>: {{profile[1]}}<br><strong>Last Name</strong>: {{profile[2]}}</p>
+                        <p class="card-text"><strong>Username</strong>: {{profile['username']}}<br><strong>First Name</strong>: {{profile['firstname']}}<br><strong>Last Name</strong>: {{profile['lastname']}}</p>
                     </div>
                 </div>
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
                     <div class="card-header" style="background-color: var(--orange1); color: white">Address:</div>
                     <div class="card-body">
-                        <p class="card-text">{{profile[4]}}<br>{{profile[5]}}, {{profile[6]}} {{profile[7]}}</p>
+                        <p class="card-text">{{profile['address']}}<br>{{profile['city']}}, {{profile['state']}} {{profile['zip']}}</p>
                     </div>
                 </div>
                 <!-- <section> -->
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
                     <div class="card-header" style="background-color: var(--orange2); color: white">Contact Information:</div>
                     <div class="card-body">
-                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
+                        <p class="card-text"><strong>Email:</strong> {{profile['email']}}</p>
                     </div>
                 </div>
                 <!-- </section> -->
@@ -106,11 +106,16 @@
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
                     <div class="card-header" style="background-color: var(--navy2); color: white">Past Orders:</div>
                     <div class="card-body">
-                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
-                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
-                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
-                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
-                        <p class="card-text"><strong>Email:</strong> {{profile[3]}}</p>
+                        {% for cart in listOfCarts %}
+                        <div class="card-text"><strong style="color:red">CartID: </strong> {{cart['cartID']}} ({{cart['total']}})</div>
+                            {% for item in listOfItems %}
+                                {% if item["cartID"] == cart['cartID']%}
+                                <div class="card-text"><strong>Item ID: </strong>{{item['itemID']}}</div>
+                                <div class="card-text"><strong>Price: </strong>{{item['price']}}</div>
+                                {% endif %}
+                            {% endfor %}
+                            <hr/>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
