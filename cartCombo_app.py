@@ -236,7 +236,7 @@ def login():
       session['logged_in'] = True
       session['username'] = username
       UID = rows[0]['UID']
-      print("UID: ", UID)
+      #print("UID: ", UID)
 
       return home()
 
