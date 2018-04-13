@@ -4,6 +4,7 @@ import sqlite3 as sql
 import time
 import datetime
 import pdb
+import json
 import helper_function
 app = Flask(__name__)
 lid = 990
@@ -25,15 +26,41 @@ def map():
     con = sql.connect("data/test.db")
     con.row_factory = sql.Row
     cur = con.cursor()
-    query = "select * from User where UID=\'" + str(UID) + "\'"
+    query = "SELECT * FROM User WHERE UID=\'" + str(UID) + "\'"
     cur.execute(query)
     rows = cur.fetchall()
 
     if len(rows) == 0:
        return home()
     address = "".join([rows[0]['Address'], ",+",rows[0]['City'], ",+",rows[0]['State'], ",+", rows[0]['zip']])
+    return render_template('geolocate.html', address = address, state = rows[0]['State'], uid = rows[0]['UID'])
 
-    return render_template('geolocate.html', address = address)
+@app.route('/api/nearbyShoppers')
+
+def nearbyShoppers():
+    con = sql.connect("data/test.db")
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    state = request.args.get('state');
+    uid = request.args.get('uid');
+    query1 = "SELECT * FROM User WHERE State = \'" + str(state) + "\'"
+    query2 = "SELECT * FROM User WHERE UID = \'" + str(uid) + "\'"
+    cur.execute(query1 + " EXCEPT " + query2)
+    rows = cur.fetchall()
+    results = list()
+    for x in range(0, len(rows)):
+        user = dict()
+        user["username"] = rows[x]['Username'];
+        user["firstname"] = rows[x]['FirstName'];
+        user["lastname"] = rows[x]['LastName'];
+        user["email"] = rows[x]['Email'];
+        user['streetaddress'] = rows[x]['Address']
+        user["city"] = rows[x]['City'];
+        user["state"] = rows[x]['State'];
+        user["zip"] = rows[x]['Zip'];
+        results.append(user)
+
+    return json.dumps(results)
 
 @app.route('/profile')
 def profile():
@@ -43,8 +70,7 @@ def profile():
     con = sql.connect("data/test.db")
     con.row_factory = sql.Row
     cur = con.cursor()
-    query = "select * from User where UID=\'" + str(UID) + "\'"
-    cur.execute(query)
+    cur.execute("select * from User where UID=\'" + str(UID) + "\'")
     rows = cur.fetchall()
 
     # (Username,Password,Email,Address,City,State,Zip,FirstName,LastName)
@@ -131,6 +157,17 @@ def user():
     cur.execute("select * from User")
     rows = cur.fetchall()
     return render_template("user.html", rows = rows)
+
+@app.route('/browse')
+def browse():
+
+    # con = sql.connect("data/test.db")
+    # con.row_factory = sql.Row
+    #
+    # cur = con.cursor()
+    # cur.execute("select * from User")
+    # rows = cur.fetchall()
+    return render_template("browse.html")
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():

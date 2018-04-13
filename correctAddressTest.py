@@ -11,7 +11,7 @@ def main():
     # Generate fake users with Faker
     users = [];
     fake = Faker()
-    for i in range(0, 10):
+    for i in range(0, 700):
         individualUser = [];
         someInfo = fake.simple_profile(sex=None) #returns simple profile  (name, email, username)
         individualUser.append(someInfo["username"])

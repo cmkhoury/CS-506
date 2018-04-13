@@ -76,7 +76,7 @@ def main():
         }
 
         # Perform actual login
-        # result = session_requests.post("http://127.0.0.1:5000/login", data = payload, headers = dict(referer = LOGIN_URL))
+        result = session_requests.post("http://127.0.0.1:5000/login", data = payload, headers = dict(referer = LOGIN_URL))
 
         # Check if resulting page is login (failure) or home (successful)
         result = session_requests.get("http://127.0.0.1:5000/")
@@ -85,17 +85,72 @@ def main():
         if "Home" not in str(bucket_names): print("Logged in failed for " + users[i][0])
 
         #Check that new user exists, then delete them
+        states = [["Alabama", "AL"],
+["Alaska", "AK"],
+["Arizona", "AZ"],
+["Arkansas", "AR"],
+["California", "CA"],
+["Colorado", "CO"],
+["Connecticut", "CT"],
+["Delaware", "DE"],
+["Florida", "FL"],
+["Georgia", "GA"],
+["Hawaii", "HI"],
+["Idaho", "ID"],
+["Illinois", "IL"],
+["Indiana", "IN"],
+["Iowa", "IA"],
+["Kansas", "KS"],
+["Kentucky", "KY"],
+["Louisiana", "LA"],
+["Maine", "ME"],
+["Maryland", "MD"],
+["Massachusetts", "MA"],
+["Michigan", "MI"],
+["Minnesota", "MN"],
+["Mississippi", "MS"],
+["Missouri", "MO"],
+["Montana", "MT"],
+["Nebraska", "NE"],
+["Nevada", "NV"],
+["New Hampshire", "NH"],
+["New Jersey", "NJ"],
+["New Mexico", "NM"],
+["New York", "NY"],
+["North Carolina", "NC"],
+["North Dakota", "ND"],
+["Ohio", "OH"],
+["Oklahoma", "OK"],
+["Oregon", "OR"],
+["Pennsylvania", "PA"],
+["Rhode Island", "RI"],
+["South Carolina", "SC"],
+["South Dakota", "SD"],
+["Tennessee", "TN"],
+["Texas", "TX"],
+["Utah", "UT"],
+["Vermont", "VT"],
+["Virginia", "VA"],
+["Washington", "WA"],
+["West Virginia", "WV"],
+["Wisconsin", "WI"],
+["Wyoming", "WY"]]
         try:
             with sql.connect("data/test.db") as con:
                 curs = con.cursor()
-                # oldquery = "SELECT * FROM User WHERE Username = (?)", (users[i][0],)
-                query = "UPDATE User SET State='New York' WHERE State = 'NY'"
-                inserted = con.execute(query)
-                for row in inserted:
-                    if row[1] != users[i][0]:  print("Did not find " +  users[i][0])
-                deleted = con.execute("DELETE FROM User WHERE State = 'NY'")
-                if deleted.rowcount > 0: print("Deleted " + users[i][0])
-                else: print("Delete failed")
+                # query = "SELECT * FROM User WHERE Username = (?)", (users[i][0],)
+                for i in range(0,50):
+                    query = "UPDATE User SET State=\'" + states[i][1] + "\' WHERE State = \'" + states[i][0] + "\'"
+                    inserted = con.execute(query)
+
+
+                # query = "UPDATE User SET State='New York' WHERE State = 'NY'"
+                # inserted = con.execute( "SELECT * FROM User WHERE Username = (?)", (users[i][0],))
+                # for row in inserted:
+                #     if row[1] != users[i][0]:  print("Did not find " +  users[i][0])
+                # deleted = con.execute("DELETE FROM User WHERE State = 'NY'")
+                # if deleted.rowcount > 0: print("Deleted " + users[i][0])
+                # else: print("Delete failed")
                 con.commit()
 
         except Exception as e:
