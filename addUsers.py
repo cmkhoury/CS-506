@@ -134,7 +134,8 @@ def main():
 ["Washington", "WA"],
 ["West Virginia", "WV"],
 ["Wisconsin", "WI"],
-["Wyoming", "WY"]]
+["Wyoming", "WY"]
+]
         try:
             with sql.connect("data/test.db") as con:
                 curs = con.cursor()
