@@ -12,10 +12,17 @@ global msg
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
-   if not session.get('logged_in'):
-      return render_template('login.html')
-   else:
-      return render_template('home.html')
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    if session.get('is_power'):
+        return render_template('powerHome.html')
+    else:
+        return render_template('home.html')
+       #if session.get('is_regular'):
+        #   return render_template('home.html')
+       #if session.get('is_power'):
+        #   return render_template('powerHome.html')
+
 app.secret_key = os.urandom(12)
 
 @app.route('/map')
@@ -90,8 +97,7 @@ def profile():
 def new_user():
     # if not session.get('logged_in'):
     #     return render_template('login.html')
-    # if not session.get('is_power'):
-    #     return render_template('home.html')
+
     return render_template('addUser.html')
 
 #CREATE TABLE User(
@@ -181,17 +187,21 @@ def login():
    cur.execute(query)
 
    rows = cur.fetchall()
+
+   if rows[0]['UserLevel'] == 'power':
+      session['is_power'] = True
+   elif rows[0]['UserLevel'] == '':
+      session['is_regular'] = True
+
    if len(rows) == 0:
       return home()
    elif helper_function.checkPassword(password.encode(), rows[0]['Password'].encode()):
+
       session['logged_in'] = True
       session['username'] = username
       UID = rows[0]['UID']
       print("UID: ", UID)
-      # if rows[0]['UserLevel'] == 'power':
-      #    session['is_power'] = True
-      # elif rows[0]['UserLevel'] == 'regular':
-      #    session['is_regular'] = True
+
       return home()
 
    else:
