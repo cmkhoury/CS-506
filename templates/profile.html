@@ -111,6 +111,7 @@
                             {% for item in listOfItems %}
                                 {% if item["cartID"] == cart['cartID']%}
                                 <div class="card-text"><strong>Item ID: </strong>{{item['itemID']}}</div>
+                                <div class="card-text"><strong>Item Description: </strong>{{item['description']}}</div>
                                 <div class="card-text"><strong>Price: </strong>{{item['price']}}</div>
                                 {% endif %}
                             {% endfor %}

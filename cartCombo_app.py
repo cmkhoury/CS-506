@@ -63,7 +63,7 @@ def profile():
     profile['state'] = rows[0]['State']
     profile['zip'] = rows[0]['zip']
 
-    query = "SELECT Cart.CID AS 'CartID',Cart.Total AS 'Total',Item.IID AS 'ItemID',Item.Price AS 'Price', Item.Quantity AS 'Quantity' FROM Cart INNER JOIN CartItem ON Cart.CID = CartItem.CID INNER JOIN Item ON CartItem.IID = Item.IID WHERE UID = \'" + str(UID) + "\'"
+    query = "SELECT Cart.CID AS 'CartID',Cart.Total AS 'Total',Item.Description AS 'Description',Item.IID AS 'ItemID',Item.Price AS 'Price', Item.Quantity AS 'Quantity' FROM Cart INNER JOIN CartItem ON Cart.CID = CartItem.CID INNER JOIN Item ON CartItem.IID = Item.IID WHERE UID = \'" + str(UID) + "\'"
     cur.execute(query)
     rows = cur.fetchall()
 
@@ -79,6 +79,7 @@ def profile():
       item['cartID'] = rows[x]['CartID']
       item['itemID'] = rows[x]['ItemID']
       item['price'] = rows[x]['Price']
+      item['description'] = rows[x]['Description']
       item['quantity'] = rows[x]['Quantity']
       if(item not in listofItems): listofItems.append(item)
 
@@ -212,7 +213,7 @@ def searchPartner():
 
 @app.route('/api/searchPartner') #?name = "XXX"
 def searchPartner_api():
- 
+
   con = sql.connect("data/test.db")
   con.row_factory = sql.Row
   cur = con.cursor()
@@ -221,7 +222,7 @@ def searchPartner_api():
   cur.execute(query)
   rows = cur.fetchall()
   results = list()
-  for x in range(0, len(rows)): 
+  for x in range(0, len(rows)):
     user = dict()
     user["email"] = rows[x]['email'];
     user["username"] = rows[x]['username'];
@@ -235,7 +236,7 @@ def searchPartner_api():
 
 
   #if len(rows) == 0:
-  
+
   return json.dumps(results);
 
 @app.route('/api/hasUsername') #?username = "XXX"
