@@ -3,7 +3,7 @@
 
 <head>
     <!-- This is the Home Page -->
-    <title>Dashboard Page</title>
+            <title>{{profile[1]}}'s Profile</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap_litera.min.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
@@ -52,7 +52,7 @@
 
 <body style="background-color: white">
     <header>
-        <h2>Here's your profile, {{profile[1]}}:
+        <h2>Here's your profile, {{profile['firstname']}}:
             <div class="btn-group" style="float: right">
               <button type="button" class="btn btn-secondary"><a href = "/" style="color: white; text-decoration: none;"><small>Back to Dashboard</small></a>
               <button type="button" class="btn btn-secondary"><a href = "/logout" style="color: white; text-decoration: none;"><small>Logout</small></a>
