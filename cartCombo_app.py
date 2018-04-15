@@ -10,6 +10,7 @@ import json
 app = Flask(__name__)
 lid = 990
 global msg
+db = "data/test.db"
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
@@ -31,7 +32,7 @@ def map():
     if not session.get('logged_in'):
        return render_template('login.html')
 
-    con = sql.connect("data/test.db")
+    con = sql.connect(db)
     con.row_factory = sql.Row
     cur = con.cursor()
     query = "SELECT * FROM User WHERE UID=\'" + str(UID) + "\'"
@@ -46,7 +47,7 @@ def map():
 @app.route('/api/nearbyShoppers')
 
 def nearbyShoppers():
-    con = sql.connect("data/test.db")
+    con = sql.connect(db)
     con.row_factory = sql.Row
     cur = con.cursor()
     state = request.args.get('state');
@@ -75,7 +76,7 @@ def profile():
     if not session.get('logged_in'):
        return render_template('login.html')
 
-    con = sql.connect("data/test.db")
+    con = sql.connect(db)
     con.row_factory = sql.Row
     cur = con.cursor()
     cur.execute("select * from User where UID=\'" + str(UID) + "\'")
@@ -158,7 +159,7 @@ def addUserData():
          firstname = request.form['firstname']
          lastname = request.form['lastname']
 
-         with sql.connect("data/test.db") as con:
+         with sql.connect(db) as con:
             cur = con.cursor()
             cur.execute("INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES (?,?,?,?,?,?,?,?,?)",
             (username,password,email,address,city,state,zipActual,firstname,lastname))
@@ -177,7 +178,7 @@ def addUserData():
 @app.route('/user')
 def user():
 
-    con = sql.connect("data/test.db")
+    con = sql.connect(db)
     con.row_factory = sql.Row
 
     cur = con.cursor()
@@ -188,7 +189,7 @@ def user():
 @app.route('/carts')
 def carts():
 
-    con = sql.connect("data/test.db")
+    con = sql.connect(db)
     con.row_factory = sql.Row
     cur = con.cursor()
     currentUser = session.get('username')
@@ -200,7 +201,7 @@ def carts():
 @app.route('/browse')
 def browse():
 
-    # con = sql.connect("data/test.db")
+    # con = sql.connect(db)
     # con.row_factory = sql.Row
     #
     # cur = con.cursor()
@@ -214,7 +215,7 @@ def login():
    username = request.form['username']
    password = request.form['password']
 
-   con = sql.connect("data/test.db")
+   con = sql.connect(db)
    con.row_factory = sql.Row
 
    cur = con.cursor()
@@ -235,7 +236,7 @@ def login():
       session['logged_in'] = True
       session['username'] = username
       UID = rows[0]['UID']
-      print("UID: ", UID)
+      #print("UID: ", UID)
 
       return home()
 
@@ -259,7 +260,7 @@ def searchPartner():
 @app.route('/api/searchPartner') #?name = "XXX"
 def searchPartner_api():
 
-  con = sql.connect("data/test.db")
+  con = sql.connect(db)
   con.row_factory = sql.Row
   cur = con.cursor()
   name = request.args.get('name');
@@ -286,7 +287,7 @@ def searchPartner_api():
 
 @app.route('/api/hasUsername') #?username = "XXX"
 def hasUsername_api():
-  con = sql.connect("data/test.db")
+  con = sql.connect(db)
   con.row_factory = sql.Row
   cur = con.cursor()
   name = request.args.get('username');
