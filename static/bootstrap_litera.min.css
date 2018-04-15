@@ -8486,7 +8486,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .bg-dark {
-    background-color: #02B875 !important
+    background-color: var(--orange2) !important
 }
 
 .bg-light {
