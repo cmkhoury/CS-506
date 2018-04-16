@@ -7,6 +7,8 @@ import pdb
 import json
 import helper_function
 import json
+import json
+import requests
 app = Flask(__name__)
 lid = 990
 global msg
@@ -41,8 +43,8 @@ def map():
 
     if len(rows) == 0:
        return home()
-    address = "".join([rows[0]['Address'], ",+",rows[0]['City'], ",+",rows[0]['State'], ",+", rows[0]['zip']])
-    return render_template('geolocate.html', address = address, state = rows[0]['State'], uid = rows[0]['UID'])
+
+    return render_template('geolocate.html', lat = rows[0]['Lat'], lon = rows[0]['Lon'], state = rows[0]['State'], uid = rows[0]['UID'])
 
 @app.route('/api/nearbyShoppers')
 
@@ -67,6 +69,8 @@ def nearbyShoppers():
         user["city"] = rows[x]['City'];
         user["state"] = rows[x]['State'];
         user["zip"] = rows[x]['Zip'];
+        user["lat"] = rows[x]['Lat'];
+        user["lon"] = rows[x]['Lon'];
         results.append(user)
 
     return json.dumps(results)
@@ -159,12 +163,28 @@ def addUserData():
          firstname = request.form['firstname']
          lastname = request.form['lastname']
 
+         addressFormatted = "".join([address, ",+", city, ",+", state, ",+", zipActual])
+         apiKEY = "AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk"
+         call = "".join(["https://maps.googleapis.com/maps/api/geocode/json?address=", addressFormatted, "&key=", apiKEY])
+         # print(call)
+         response = requests.get(call)
+         json_data = response.json()
+
+        # # If google can't get a lat lon from the address, it's one of the fake ones
+        #  if (json_data['status'] == "ZERO_RESULTS"):
+        #      print("Fake Address Found")
+        #      continue;
+
+         lat = str(json_data['results'][0]['geometry']['location']['lat'])
+         lon = str(json_data['results'][0]['geometry']['location']['lng'])
+
          with sql.connect(db) as con:
             cur = con.cursor()
-            cur.execute("INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName) VALUES (?,?,?,?,?,?,?,?,?)",
-            (username,password,email,address,city,state,zipActual,firstname,lastname))
+            cur.execute("INSERT INTO User(Username,Password,Email,Address,City,State,Zip,FirstName,LastName,Lat,Lon) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (username,password,email,address,city,state,zipActual,firstname,lastname,lat,lon))
             con.commit()
             msg = "Record successfully added"
+
     except Exception as e:
              con.rollback()
              if (str(e) == "UNIQUE constraint failed: User.Username"):

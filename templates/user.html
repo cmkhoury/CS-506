@@ -37,30 +37,36 @@
 		<thead>
 			<tr>
 				<th scope="col">UID</th>
+				<th scope="col">UserLevel</th>
 				<th scope="col">Username</th>
-				<th scope="col">Email</th>
+				<!-- <th scope="col">Email</th> -->
 				<th scope="col">Address</th>
 				<th scope="col">City</th>
 				<th scope="col">State</th>
 				<th scope="col">ZIP</th>
 				<th scope="col">FirstName</th>
 				<th scope="col">LastName</th>
-				<th scope="col">OID</th>
+				<th scope="col">Lat</th>
+				<th scope="col">Lon</th>
+				<!-- <th scope="col">OID</th> -->
 			</tr>
 		</thead>
 		<tbody>
 			{% for row in rows %}
 			<tr>
 				<td>{{row["UID"]}}</td>
+				<td>{{row["UserLevel"]}}</td>
 				<td>{{row['Username']}}</td>
-				<td> {{row['Email']}}</td>
+				<!-- <td> {{row['Email']}}</td> -->
 				<td>{{row["Address"]}}</td>
 				<td>{{row["City"]}}</td>
 				<td>{{row["State"]}}</td>
 				<td>{{row["Zip"]}}</td>
 				<td>{{row["FirstName"]}}</td>
 				<td>{{row["LastName"]}}</td>
-				<td>{{row["OID"]}}</td>
+				<td>{{row["Lat"]}}</td>
+				<td>{{row["Lon"]}}</td>
+				<!-- <td>{{row["OID"]}}</td> -->
 			</tr>
 			{% endfor %}
 		</tbody>
