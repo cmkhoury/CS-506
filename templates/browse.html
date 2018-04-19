@@ -75,35 +75,35 @@
 	   * element that contains the map. */
 		#loader {
 			position: relative;
-			left: 50%;
-			top: 65%;
+			left: calc(var(--mapwidth) / 2);
+			top: 50%;
 			z-index: 1;
-			margin: -66px 0 0 -66px;
+			/*margin: -66px 0 0 -66px;*/
 			border: 8px solid #f3f3f3;
 			border-radius: 50%;
-			border-top: 8px solid #2980B9;
+			border-top: 8px solid var(--teal2);
 			width: 50px;
 			height: 50px;
 			-webkit-animation: spin 2s linear infinite;
 			animation: spin 2s linear infinite;
 		}
+		#loader-wrapper {
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: 100%;
+		    z-index: 1000;
+		}
 
 		@-webkit-keyframes spin {
-			0% {
-				-webkit-transform: rotate(0deg);
-			}
-			100% {
-				-webkit-transform: rotate(360deg);
-			}
+			0% { -webkit-transform: rotate(0deg);}
+			100% {	-webkit-transform: rotate(360deg);	}
 		}
 
 		@keyframes spin {
-			0% {
-				transform: rotate(0deg);
-			}
-			100% {
-				transform: rotate(360deg);
-			}
+			0% {transform: rotate(0deg);}
+			100% {transform: rotate(360deg);}
 		}
 
 	</style>
@@ -126,7 +126,6 @@
 				url: "/api/nearbyShoppers?state=" + '{{state}}' + "&&uid=" + '{{uid}}',
 				success: function(data) {
 					processPoints(data)
-					console.log(data)
 				},
 				error: function(data) {
 					console.log("Error pulling addresses from database via cartCombo_app.py and ajax call\n")
@@ -195,7 +194,7 @@
 					console.log(this.title)
 					downthepage = $("#" + this.title).position().top;
 					console.log(downthepage)
-					$("#content1").scrollTop(downthepage-50)
+					$("#content1").scrollTop(downthepage-$(window).height()*.1)
 					// console.log(top)
 					// $("#content1").animate({
 					// 		'scrollTop' : $("#" + this.title).position().top
@@ -204,6 +203,8 @@
 					$(".card").not("#" + this.title).css("border","1px solid rgba(0, 0, 0, 0.125)")
 				});
 			}
+			$("#loader").remove();
+			$("#loader-wrapper").remove();
 		}
 
 		var map, infoWindow;
@@ -242,7 +243,6 @@
 				info: contentString
 			});
 
-			$("#loader").remove();
 			google.maps.event.addListener(marker, 'click', function() {
 				infowindow.setContent(this.info);
 				infowindow.open(map, this);
@@ -252,7 +252,10 @@
 </head>
 
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<div id="loader-wrapper">
+		<div id="loader"></div>
+	</div>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="display: flex">
 		<div class="navbar-brand" href="#">Browse Nearby Shoppers</div>
 		<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
