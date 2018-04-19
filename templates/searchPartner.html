@@ -1,6 +1,7 @@
 <html ng-app="SearchPartnerApp">
 	<head>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
+		    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap_litera.min.css') }}">
 		<script src="{{ url_for('static',filename='js/jquery-3.3.1.min.js') }}"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
@@ -31,22 +32,22 @@
 	  	</div>
 
 	  		<div class="panel panel-primary">
-			  <div class="panel-heading">List of Partners</div>
+			  <!-- <div class="panel-heading">List of Partners</div> -->
 			  <div class="panel-body">
 			    <div ng-repeat="partner in partners">
-	  				<h4>{{'{{partner.firstname}}'}} {{'{{partner.lastname}}'}}</h4>
+	  				<h6>{{'{{partner.firstname}}'}} {{'{{partner.lastname}}'}}</h6>
 	  				<div><strong>Email: </strong>{{'{{partner.email}}'}} </div>
 	  				<div><strong>Username: </strong>{{'{{partner.username}}'}} </div>
-	  				<div><strong>Address: </strong>{{'{{partner.address}}'}} {{'{{partner.city}}'}}, {{'{{partner.state}}'}}<br/>{{'{{partner.zip}}'}} </div>
+	  				<div><strong>Address: </strong>{{'{{partner.address}}'}} {{'{{partner.city}}'}}, {{'{{partner.state}}'}}, {{'{{partner.zip}}'}} </div>
 	  				<hr/>
 	  			</div>
 			  </div>
 			</div>
 
 
-	  		
-		
-		
-		
+
+
+
+
 	</body>
 </html>

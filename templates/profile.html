@@ -3,11 +3,11 @@
 
 <head>
     <!-- This is the Profile Page -->
-            <title>{{profile[1]}}'s Profile</title>
+    <title>{{profile['firstname']}}'s Profile</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap_litera.min.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='default_style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='default_style.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
 
@@ -36,6 +36,8 @@
 
         .btn-secondary {
             margin-left: 5%;
+            padding-top: 2px;
+            padding-bottom: 5px;
         }
 
         strong {
@@ -47,15 +49,19 @@
             margin: 0 auto;
             padding: 20px;
         }
+
+        p {
+            padding: 0px;
+        }
     </style>
 </head>
 
 <body style="background-color: white">
     <header>
         <h2>Here's your profile, {{profile['firstname']}}:
-            <div class="btn-group" style="float: right">
-              <button type="button" class="btn btn-secondary"><a href = "/" style="color: white; text-decoration: none;"><small>Back to Dashboard</small></a>
-              <button type="button" class="btn btn-secondary"><a href = "/logout" style="color: white; text-decoration: none;"><small>Logout</small></a>
+            <div class="btn-group" style="margin-top: 5px;">
+              <button type="button" class="btn btn-secondary"><a href="/" style="color: white; text-decoration: none;"><small>Back to Dashboard</small></a>
+              </button><button type="button" class="btn btn-secondary"><a href="/logout" style="color: white; text-decoration: none;"><small>Logout</small></a>
             <div>
     </h2>
         <!-- <div class="options">
@@ -75,7 +81,7 @@
     profile.append(rows[0]['City'])
     profile.append(rows[0]['State'])
     profile.append(rows[0]['zip']) -->
-    <div class="wrapper">
+    <div class="wrapper" style="margin-top: 20px">
         <div class="row">
             <div class="col-4">
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
@@ -101,22 +107,72 @@
             </div>
             <!-- </div> -->
             <!-- <div class="wrapper"> -->
+            <!-- <div class="card border-secondary mb-3" style="max-width: 20rem;">
+                      <div class="card-header">Header</div>
+                      <div class="card-body">
+                        <h4 class="card-title">Secondary card title</h4>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                      </div>
+                    </div> -->
             <div class="col-8">
                 <!-- <section> -->
-                <div class="card bg-light mb-3" style="background-color: var(--light);">
-                    <div class="card-header" style="background-color: var(--navy2); color: white">Carts:</div>
+                <div class="card bg-light bg-6" style="background-color: var(--light);">
+                    <div class="card-header" style="background-color: var(--navy2); color: white">Your Current Carts:</div>
                     <div class="card-body">
-                        {% for cart in listOfCarts %}
-                        <div class="card-text"><strong style="color:red">CartID: </strong> {{cart['cartID']}} ({{cart['total']}})</div>
-                            {% for item in listOfItems %}
-                                {% if item["cartID"] == cart['cartID']%}
-                                <div class="card-text"><strong>Item ID: </strong>{{item['itemID']}}</div>
-                                <div class="card-text"><strong>Item Description: </strong>{{item['description']}}</div>
-                                <div class="card-text"><strong>Price: </strong>{{item['price']}}</div>
-                                {% endif %}
-                            {% endfor %}
-                            <hr/>
-                        {% endfor %}
+                        <div class="row">
+                            {% for cart in listOfCarts %}
+                            <div class="card-body">
+                                <div class="card border-secondary">
+                                    <div>
+                                        <h6 class="card-header" style="text-align:left;">ID #{{cart['cartID']}}
+                                          <span style="float:right;"></span>
+                                      </h6>
+                                    </div>
+
+                                    <div class="card-body">
+                                        {% for item in listOfItems %} {% if item["cartID"] == cart['cartID']%}
+                                        <!-- <p class="card-text"> -->
+                                        <p style="text-align:left; margin-bottom: .5em">
+                                            {{item['description']}} (ID: {{item['itemID']}}):
+                                            <span style="float:right;">${{item['price']}}</span>
+                                            <!-- </p> -->
+                                        </p>
+                                        {% endif %} {% endfor %}
+                                    </div>
+                                    <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: ${{cart['total']}}</div>
+                                </div>
+                            </div>
+                            <!-- <div class="card-text"><strong style="color:red">CartID: </strong> {{cart['cartID']}} ({{cart['total']}})</div>
+                        {% for item in listOfItems %} {% if item["cartID"] == cart['cartID']%}
+                        <p style="text-align:left;">
+                            {{item['description']}} (ID: {{item['itemID']}}):
+                            <span style="float:right;">${{item['price']}}</span>
+                        </p> -->
+
+                            <!-- {% endif %} {% endfor %} -->
+                            <hr/> {% endfor %}
+
+                            <!-- <div class="card-body">
+                                <div class="card border-secondary">
+                                    <div>
+                                        <h6 class="card-header" style="text-align:left;">ID #3051
+                                          <span style="float:right;"></span>
+                                      </h6>
+                                    </div>
+
+                                    <div class="card-body">
+
+                                        <p style="text-align:left; margin-bottom: .5em">
+                                            Colorful Mister: (ID: #4 01)
+                                            <span style="float:right;">$20.50$</span>
+
+                                        </p>
+                                    </div>
+                                    <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: $20.50</div>
+                                </div>
+                            </div> -->
+
+                        </div>
                     </div>
                 </div>
             </div>

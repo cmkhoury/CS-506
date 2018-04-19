@@ -44,7 +44,7 @@ def map():
     if len(rows) == 0:
        return home()
 
-    return render_template('geolocate.html', lat = rows[0]['Lat'], lon = rows[0]['Lon'], state = rows[0]['State'], uid = rows[0]['UID'])
+    return render_template('browse.html', lat = rows[0]['Lat'], lon = rows[0]['Lon'], state = rows[0]['State'], uid = rows[0]['UID'])
 
 @app.route('/api/nearbyShoppers')
 
@@ -71,6 +71,7 @@ def nearbyShoppers():
         user["zip"] = rows[x]['Zip'];
         user["lat"] = rows[x]['Lat'];
         user["lon"] = rows[x]['Lon'];
+        user['uid'] = rows[x]['UID'];
         results.append(user)
 
     return json.dumps(results)
@@ -218,47 +219,35 @@ def carts():
     rows = cur.fetchall()
     return render_template("carts.html", rows = rows)
 
-@app.route('/browse')
-def browse():
-
-    # con = sql.connect(db)
-    # con.row_factory = sql.Row
-    #
-    # cur = con.cursor()
-    # cur.execute("select * from User")
-    # rows = cur.fetchall()
-    return render_template("browse.html")
-
 @app.route('/login', methods=['POST', 'GET'])
 def login():
    global UID
    username = request.form['username']
+   print(username)
    password = request.form['password']
-
+   print(password)
    con = sql.connect(db)
    con.row_factory = sql.Row
-
    cur = con.cursor()
-   query = "select * from User where Username=\'" + username + "\'"
+
+   query = "SELECT * FROM User WHERE Username=\'" + username + "\'"
    cur.execute(query)
-
    rows = cur.fetchall()
-
-   if rows[0]['UserLevel'] == 'power':
-      session['is_power'] = True
-   elif rows[0]['UserLevel'] == '':
-      session['is_regular'] = True
 
    if len(rows) == 0:
       return home()
-   elif helper_function.checkPassword(password.encode(), rows[0]['Password'].encode()):
 
-      session['logged_in'] = True
-      session['username'] = username
-      UID = rows[0]['UID']
+   elif helper_function.checkPassword(password.encode(), rows[0]['Password'].encode()):
+       if rows[0]['UserLevel'] == 'power':
+          session['is_power'] = True
+       elif rows[0]['UserLevel'] == '':
+          session['is_regular'] = True
+       session['logged_in'] = True
+       session['username'] = username
+       UID = rows[0]['UID']
       #print("UID: ", UID)
 
-      return home()
+       return home()
 
    else:
       return home()

@@ -3,7 +3,7 @@
 
 <head>
 	<!-- This is the Browse Page -->
-	<title>Basic Example</title>
+	<title>Browse Nearby Shoppers</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap_litera.min.css') }}">
 	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
@@ -11,7 +11,7 @@
 	<link rel='stylesheet' media="screen and (min-width: 701px)' href='{{ url_for('static',filename='medium_style.css') }}" />
 	<style type="text/css">
 		:root {
-			--mapwidth: 50vw;
+			--mapwidth: 60vw;
 		}
 		body {
 			font-family: 'Ubuntu', sans-serif;
@@ -19,10 +19,17 @@
 		.bg-dark {
 			height: 7%;
 		}
+		#map {
+			height: 100%;
+		}
 		html,
 		body {
 			height: 100vh;
 		}
+		p, h2{
+			padding:0px;
+		}
+		.card-body p {color: grey;}
 		.maps {
 		    display: block;
 		    margin: 0 auto;
@@ -34,6 +41,7 @@
 		#content1 {
 			float: right;
 			width: 100%;
+			    overflow:auto;
 			height: 100%;
 		}
 		#sidebar1 {
@@ -42,8 +50,8 @@
 			height: 100%;
 			margin-left: calc(var(--mapwidth) * -1 );
 		}
-		#cleared1 {
-			clear: both;
+		.btn-group>.btn:first-child {
+		    margin-left: 10px;
 		}
 		#hostingsite {
 			width: 100%;
@@ -53,31 +61,205 @@
 			#wrapper1 {
 				margin-left: 0vw;
 			}
-			#content1 {
-				float: right;
-				width: 100%;
-				height: 100vh;
-				/*background-color: #CCF;*/
-			}
 			#sidebar1 {
 				float: left;
 				width: 100vw;
 				margin-left: -100vw;
 				/*background-color: #FFA;*/
 			}
+			.selected {
+				border: var(--teal2);
+			}
 		}
+		/* Always set the map height explicitly to define the size of the div
+	   * element that contains the map. */
+		#loader {
+			position: relative;
+			left: 50%;
+			top: 65%;
+			z-index: 1;
+			margin: -66px 0 0 -66px;
+			border: 8px solid #f3f3f3;
+			border-radius: 50%;
+			border-top: 8px solid #2980B9;
+			width: 50px;
+			height: 50px;
+			-webkit-animation: spin 2s linear infinite;
+			animation: spin 2s linear infinite;
+		}
+
+		@-webkit-keyframes spin {
+			0% {
+				-webkit-transform: rotate(0deg);
+			}
+			100% {
+				-webkit-transform: rotate(360deg);
+			}
+		}
+
+		@keyframes spin {
+			0% {
+				transform: rotate(0deg);
+			}
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+
 	</style>
+	<script type="text/javascript">
+		// Get user's State
+		var state = '{{state}}'
+		var uid = '{{uid}}'
+		var userInformation
+		var plusAddresses = []
+
+		// function startSpinningWheel() {
+		//     setTimeout(control, 0);
+		// }
+
+		//Ajax call:
+		async function control() {
+			await initMap()
+			$.ajax({
+				type: 'GET',
+				url: "/api/nearbyShoppers?state=" + '{{state}}' + "&&uid=" + '{{uid}}',
+				success: function(data) {
+					processPoints(data)
+					console.log(data)
+				},
+				error: function(data) {
+					console.log("Error pulling addresses from database via cartCombo_app.py and ajax call\n")
+				}
+			});
+		}
+
+		function processPoints(rawData) {
+
+			rawData = JSON.parse(rawData);
+
+			var marker = null;
+			var infowindow = new google.maps.InfoWindow();
+
+			for (var i = 0; i < rawData.length; i++) {
+				//Small check to skip null coordinates (with the case of fake addresses)
+				if (rawData[i]['lat'] == null) {continue;}
+
+				var contentString =
+					'<div id="content">' +
+					'<div id="siteNotice">' +
+					'</div>' +
+					'<h2 id="firstHeading" class="firstHeading">' + rawData[i]['firstname'] + '\'s Home:</h2>' +
+					'<div id="bodyContent">' +
+					'<p>' + rawData[i]['streetaddress'] + '. </p>' +
+					'</div>' +
+					'</div>';
+
+				var card = $("#content1").append("<div class=\"card\" + onclick=\"clickroute(" + rawData[i]['lat'] + ", " + rawData[i]['lon'] + ")\" id=\"user_" + rawData[i]['uid'] + "\"" + " style=\"margin: .5em\">" +
+  										"<div class=\"card-body\" style=\"padding: .75em;\">" +
+    									"<h6 class=\"card-title\">" + rawData[i]['firstname'] + " " + rawData[i]['lastname'] + "</h6>" +
+    									// "<h class=\"card-subtitle mb-2 text-muted\">Card subtitle</h6>" +
+    									"<p class=\"card-text\">" +
+										rawData[i]['firstname'] + " lives in " + rawData[i]['city'] + ", " + rawData[i]['state'] +
+										".  Their username is " + rawData[i]['username'] +".</p>" +
+    									// "<a href=\"#\" class=\"card-link\">Card link</a>" +
+    									// "<a href=\"#\" class=\"card-link\">Another link</a>" +
+  										"</div>" +
+										"</div>")
+				$(".card").click(function() {
+						  $(this).css("border", "2px solid var(--teal2)")
+						  $(".card").not(this).css("border","1px solid rgba(0, 0, 0, 0.125)")
+				});
+
+				google.maps.event.addListener(card, 'click', function() {
+					console.log("did it even get here")
+				   map.setCenter({lat: rawData[i]['lat'], lng: rawData[i]['lng'] });
+				   infowindow.setContent(contentStringRdr);
+				   infowindow.open(map,RdrMarker);
+				});
+
+				console.log(rawData[i]['lat'], rawData[i]['lon'])
+
+				var marker = new google.maps.Marker({
+					position: {lat: rawData[i]['lat'],lng: rawData[i]['lon']},
+					map: map,
+					title: "user_" + String(rawData[i]['uid']),
+					info: contentString,
+					icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+				});
+
+				var wait = google.maps.event.addListener(marker, 'click', function() {
+					$("#content1").scrollTop(0)
+					infowindow.setContent(this.info);
+					infowindow.open(map, this);
+					console.log(this.title)
+					downthepage = $("#" + this.title).position().top;
+					console.log(downthepage)
+					$("#content1").scrollTop(downthepage-50)
+					// console.log(top)
+					// $("#content1").animate({
+					// 		'scrollTop' : $("#" + this.title).position().top
+					// }, 'fast');
+					$("#" + this.title).css("border","2px solid var(--teal2)")
+					$(".card").not("#" + this.title).css("border","1px solid rgba(0, 0, 0, 0.125)")
+				});
+			}
+		}
+
+		var map, infoWindow;
+		function expand() {
+			console.log("implement expand box when .card is clicked, this will show more user information")
+		}
+
+		function clickroute(lat, long) {
+			expand()
+	        var latLng = new google.maps.LatLng(lat, long);
+	        map.panTo(latLng);
+	    }
+		// Sourced from:
+		// https://developers.google.com/maps/documentation/javascript/examples/infowindow-simple
+		function initMap() {
+			var userLocation = {lat: {{lat}},lng: {{lon}}}
+			window.map = new google.maps.Map(document.getElementById('map'), {
+				zoom: 10,
+				center: userLocation
+			});
+
+			var contentString = '<div id="content">' +
+				'<div id="siteNotice">' +
+				'</div>' +
+				'<h2 id="firstHeading" class="firstHeading">User Home</h2>' +
+				'<div id="bodyContent">' +
+				'<p>Where you live. </p>' +
+				'</div>' +
+				'</div>';
+
+			var infowindow = new google.maps.InfoWindow();
+
+			var marker = new google.maps.Marker({
+				position: userLocation,
+				map: map,
+				info: contentString
+			});
+
+			$("#loader").remove();
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.setContent(this.info);
+				infowindow.open(map, this);
+			});
+		}
+	</script>
 </head>
 
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-		<a class="navbar-brand" href="#">Navbar</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+		<div class="navbar-brand" href="#">Browse Nearby Shoppers</div>
+		<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
-  </button>
+  </button> -->
 
 		<div class="collapse navbar-collapse" id="navbarColor02">
-			<ul class="navbar-nav mr-auto">
+			<!-- <ul class="navbar-nav mr-auto">
 				<li class="nav-item active">
 					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
 				</li>
@@ -94,13 +276,21 @@
 			<form class="form-inline my-2 my-lg-0">
 				<input class="form-control mr-sm-2" type="text" placeholder="Search">
 				<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-			</form>
+			</form> -->
 		</div>
+		<div class="btn-group">
+		  <button type="button" class="btn btn-secondary"><a href="/" style="color: white; text-decoration: none;">Back to Dashboard</a>
+		  </button><button type="button" class="btn btn-secondary"><a href="/logout" style="color: white; text-decoration: none;">Logout</a>
+		<div>
 	</nav>
 	<div id="wrapper1">
-		<div id="content1">List of Users on this side</div>
+		<div id="content1">
+			<!-- First: the user themselves: UID: {{uid}}, State: {{state}} -->
+			<p id="firstuser"></p>
+		</div>
 		<div id="sidebar1">
-			<iframe id="hostingsite" class="map" src="/map" scrolling="no" style="overflow: hidden; height: 100%; width: 100%;"></iframe>
+			<div id="map"></div>
+			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk&callback=control"></script>
 		</div>
 		<div id="cleared1"></div>
 	</div>

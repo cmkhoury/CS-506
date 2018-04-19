@@ -156,7 +156,8 @@ b, strong {
 }
 
 small {
-    font-size: 80%
+    font-size: 50%;
+    /*line-height: 1em*/
 }
 
 sub, sup {
@@ -2026,7 +2027,7 @@ select.form-control-sm:not([size]):not([multiple]), .input-group-sm>select.form-
 .form-control-lg, .input-group-lg>.form-control, .input-group-lg>.input-group-prepend>.input-group-text, .input-group-lg>.input-group-append>.input-group-text, .input-group-lg>.input-group-prepend>.btn, .input-group-lg>.input-group-append>.btn {
     padding: 0.5rem 1rem;
     font-size: 1.32875rem;
-    line-height: 1.5;
+    /*line-height: 1.5;*/
     border-radius: 0.3rem
 }
 
@@ -2364,7 +2365,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg>select.form-
     border: 1px solid transparent;
     padding: 0.5rem 1.1rem;
     font-size: 1.063rem;
-    line-height: 1.5;
+    /*line-height: 1.5;*/
     border-radius: 0.25rem;
     -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
