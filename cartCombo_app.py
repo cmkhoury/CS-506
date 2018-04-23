@@ -29,6 +29,72 @@ def home():
 
 app.secret_key = os.urandom(12)
 
+@app.route('/api/updateUser', methods=['POST', 'GET'])
+def updateUser():
+    adrParts = [None] * 4;
+    if not session.get('logged_in'):
+       return render_template('login.html')
+    try:
+        with sql.connect("data/test.db") as con:
+
+            # (Username,Password,Email,Address,City,State,Zip,FirstName,LastName)
+            addressFormatted = ""
+            curs = con.cursor()
+            con = sql.connect(db)
+            con.row_factory = sql.Row
+            username = session.get('username')
+
+            args = request.args
+            keys = args.keys()
+            values = args.values()
+            print("got here")
+            for i in range(0, len(values)):
+                print(keys[i] + values[i])
+                #Need to update Lat Lon in the database if address changes
+                #In addition, seems like parts of address do not arrive in order they are sent? Address is sometimes last in for loop.  Put the different parts of the address in in boxes of array to keep them in order
+                if keys[i]=="address": adrParts[0] = values[i]
+                elif keys[i]=="city": adrParts[1] = values[i]
+                elif keys[i]=="state": adrParts[2] = values[i]
+                elif keys[i]=="zip": adrParts[3] = values[i]
+
+                query = "UPDATE User SET " + keys[i] + "=\'" + str(values[i]) + "\' WHERE Username = \'" + username + "\'"
+                inserted = con.execute(query)
+
+            print(adrParts[0])
+
+            if adrParts[0] is not None:
+                for i in range(0, len(adrParts)):
+                    addressFormatted = "".join([addressFormatted, adrParts[i]])
+                    if (i != len(adrParts)-1): addressFormatted = "".join([addressFormatted, ",+"])
+
+                apiKEY = "AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk"
+                call = "".join(["https://maps.googleapis.com/maps/api/geocode/json?address=", addressFormatted, "&key=", apiKEY])
+                response = requests.get(call)
+                json_data = response.json()
+
+                lat = str(json_data['results'][0]['geometry']['location']['lat'])
+                lon = str(json_data['results'][0]['geometry']['location']['lng'])
+                print(lat + ", " + lon)
+
+                query = "UPDATE User SET Lat=\'" + str(lat) + "\' WHERE Username = \'" + username + "\'"
+                con.execute(query)
+                query = "UPDATE User SET Lon=\'" + str(lon) + "\' WHERE Username = \'" + username + "\'"
+                con.execute(query)
+
+            con.commit()
+            return "success"
+
+    except Exception as e:
+         con.rollback()
+         print(e)
+         return "error"
+
+    finally:
+        con.close()
+        return "FINALLY"
+
+
+
 @app.route('/map')
 def map():
     if not session.get('logged_in'):
@@ -56,6 +122,7 @@ def nearbyShoppers():
     uid = request.args.get('uid');
     query1 = "SELECT * FROM User WHERE State = \'" + str(state) + "\'"
     query2 = "SELECT * FROM User WHERE UID = \'" + str(uid) + "\'"
+
     cur.execute(query1 + " EXCEPT " + query2)
     rows = cur.fetchall()
     results = list()

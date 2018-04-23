@@ -44,9 +44,7 @@
         }
 
         @-webkit-keyframes spin {
-            0% {
-                -webkit-transform: rotate(0deg);
-            }
+            0% {-webkit-transform: rotate(0deg);}
             100% {
                 -webkit-transform: rotate(360deg);
             }
@@ -95,15 +93,14 @@
                 var destinations = response.destinationAddresses;
 
             for (var i = 0; i < origins.length; i++) {
+
                 var results = response.rows[i].elements;
                     for (var j = 0; j < results.length; j++) {
-                        window.distance = element.distance.text;
+                        window.distance = elements.distance.text;
                     }
             }
            }
         }
-
-
 
         function processPoints(rawData) {
 

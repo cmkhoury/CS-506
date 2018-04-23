@@ -4,11 +4,16 @@
 <head>
 	<!-- This is the Browse Page -->
 	<title>Browse Nearby Shoppers</title>
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap_litera.min.css') }}">
 	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='default_style.css') }}">
-	<link rel='stylesheet' media="screen and (min-width: 701px)' href='{{ url_for('static',filename='medium_style.css') }}" />
+	<!-- <link rel='stylesheet' media="screen and (min-width: 701px)' href='{{ url_for('static',filename='medium_style.css') }}" /> -->
+	<!-- <script href="{{ url_for('static',filename='bootstrap.min.js') }}"></script> -->
+	<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
 	<style type="text/css">
 		:root {
 			--mapwidth: 60vw;
@@ -105,6 +110,32 @@
 			0% {transform: rotate(0deg);}
 			100% {transform: rotate(360deg);}
 		}
+		.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+			background-color: var(--orange2);
+		}
+		.dropdown {
+    position: relative;
+    display: inline-block;
+	font-size: 100px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+}
+
+/*.dropdown:hover .dropdown-content {
+    display: block;
+}*/
+.dropdown-item {
+	cursor: -webkit-grab;
+    padding: 0px;
+}
 
 	</style>
 	<script type="text/javascript">
@@ -119,13 +150,16 @@
 		// }
 
 		//Ajax call:
-		async function control() {
+		async function control(limit) {
+			if (!limit) { limit = 5}
+
+			console.log( parseInt(limit))
 			await initMap()
 			$.ajax({
 				type: 'GET',
 				url: "/api/nearbyShoppers?state=" + '{{state}}' + "&&uid=" + '{{uid}}',
 				success: function(data) {
-					processPoints(data)
+					processPoints(data, parseInt(limit))
 				},
 				error: function(data) {
 					console.log("Error pulling addresses from database via cartCombo_app.py and ajax call\n")
@@ -133,78 +167,131 @@
 			});
 		}
 
-		function processPoints(rawData) {
+		function calculateDistances(origins,destinations, i, limit) {
+			console.log("claculateDistance: ", i)
+			var service = new google.maps.DistanceMatrixService();
+			var d = $.Deferred();
+			service.getDistanceMatrix({
+					origins: origins,
+					destinations: destinations,
+					unitSystem: google.maps.UnitSystem.IMPERIAL,
+					travelMode: 'DRIVING',
+				},
+				function(response, status){
+				  if (status != google.maps.DistanceMatrixStatus.OK) { d.reject(status);}
+				  else { d.resolve(response, i, limit);
+				  }
+				});
+			return d.promise();
+		}
 
+		function processPoints(rawData, limit) {
+			var complete = false;
 			rawData = JSON.parse(rawData);
+			distance = "originalvalue"; window.i=0;
+			// window.distance = distance;
 
 			var marker = null;
 			var infowindow = new google.maps.InfoWindow();
 
-			for (var i = 0; i < rawData.length; i++) {
+			for (i = 0; i < rawData.length; i++) {
 				//Small check to skip null coordinates (with the case of fake addresses)
-				if (rawData[i]['lat'] == null) {continue;}
+				if (rawData[i]['lat'] == null) { continue; }
+				$(".card").remove()
+				// var service =  new google.maps.DistanceMatrixService();
+				// service.getDistanceMatrix({
+				var origins = {lat: {{lat}}, lng: {{lon}}}
+				var destinations = {lat: rawData[i]['lat'], lng: rawData[i]['lon']}
 
-				var contentString =
-					'<div id="content">' +
-					'<div id="siteNotice">' +
-					'</div>' +
-					'<h2 id="firstHeading" class="firstHeading">' + rawData[i]['firstname'] + '\'s Home:</h2>' +
-					'<div id="bodyContent">' +
-					'<p>' + rawData[i]['streetaddress'] + '. </p>' +
-					'</div>' +
-					'</div>';
+		        calculateDistances([origins],[destinations], i, limit)
+		           .done(function(response, i, limit){
+		                var origins = response.originAddresses;
 
-				var card = $("#content1").append("<div class=\"card\" + onclick=\"clickroute(" + rawData[i]['lat'] + ", " + rawData[i]['lon'] + ")\" id=\"user_" + rawData[i]['uid'] + "\"" + " style=\"margin: .5em\">" +
-  										"<div class=\"card-body\" style=\"padding: .75em;\">" +
-    									"<h6 class=\"card-title\">" + rawData[i]['firstname'] + " " + rawData[i]['lastname'] + "</h6>" +
-    									// "<h class=\"card-subtitle mb-2 text-muted\">Card subtitle</h6>" +
-    									"<p class=\"card-text\">" +
-										rawData[i]['firstname'] + " lives in " + rawData[i]['city'] + ", " + rawData[i]['state'] +
-										".  Their username is " + rawData[i]['username'] +".</p>" +
-    									// "<a href=\"#\" class=\"card-link\">Card link</a>" +
-    									// "<a href=\"#\" class=\"card-link\">Another link</a>" +
-  										"</div>" +
-										"</div>")
-				$(".card").click(function() {
-						  $(this).css("border", "2px solid var(--teal2)")
-						  $(".card").not(this).css("border","1px solid rgba(0, 0, 0, 0.125)")
-				});
+		                for (var k = 0; k < origins.length; k++) {
+		                    var results = response.rows[k].elements;
+		                    for (var l = 0; l < results.length; l++) {
+		                       distance = results[l].distance.text;
+							   time = results[l].duration.text;
+								console.log(distance, time)
+								// window.distance = distance;
+		                        // document.getElementById('result').innerHTML += results[j].distance.text;
+		                    }
+		                }
+						numDistance = parseFloat(distance.split(" ")[0])
+						console.log(parseFloat(distance.split(" ")[0]), limit)
 
-				google.maps.event.addListener(card, 'click', function() {
-					console.log("did it even get here")
-				   map.setCenter({lat: rawData[i]['lat'], lng: rawData[i]['lng'] });
-				   infowindow.setContent(contentStringRdr);
-				   infowindow.open(map,RdrMarker);
-				});
+						if (limit > numDistance) {   //only usrs within certain radius
 
-				console.log(rawData[i]['lat'], rawData[i]['lon'])
+							console.log(rawData[i]['firstname'], " is ", distance, " away from me");
+							var contentString =
+								'<div id="content">' +
+								'<div id="siteNotice">' +
+								'</div>' +
+								'<h2 id="firstHeading" class="firstHeading">' + rawData[i]['firstname'] + '\'s Home:</h2>' +
+								'<div id="bodyContent">' +
+								'<p>' + rawData[i]['streetaddress'] + '. <br>That\'s ' + distance + ' away from you (' + time + ' by car).</p>' +
+								'</div>' +
+								'</div>';
 
-				var marker = new google.maps.Marker({
-					position: {lat: rawData[i]['lat'],lng: rawData[i]['lon']},
-					map: map,
-					title: "user_" + String(rawData[i]['uid']),
-					info: contentString,
-					icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
-				});
+							var card = $("#content1").append("<div class=\"card\" + onclick=\"clickroute(" + rawData[i]['lat'] + ", " + rawData[i]['lon'] + ")\" id=\"user_" + rawData[i]['uid'] + "\"" + " style=\"margin: .5em\">" +
+													"<div class=\"card-body\" style=\"padding: .75em;\">" +
+													"<h6 class=\"card-title\">" + rawData[i]['firstname'] + " " + rawData[i]['lastname'] + "</h6>" +
+													// "<h class=\"card-subtitle mb-2 text-muted\">Card subtitle</h6>" +
+													"<p class=\"card-text\">" +
+													rawData[i]['firstname'] + " lives in " + rawData[i]['city'] + ", " + rawData[i]['state'] +
+													".  Their username is " + rawData[i]['username'] +". <br>They're " + distance + " away from you.</p>" +
+													// "<a href=\"#\" class=\"card-link\">Card link</a>" +
+													// "<a href=\"#\" class=\"card-link\">Another link</a>" +
+													"</div>" +
+													"</div>")
+							$(".card").click(function() {
+									  $(this).css("border", "2px solid var(--teal2)")
+									  $(".card").not(this).css("border","1px solid rgba(0, 0, 0, 0.125)")
+							});
 
-				var wait = google.maps.event.addListener(marker, 'click', function() {
-					$("#content1").scrollTop(0)
-					infowindow.setContent(this.info);
-					infowindow.open(map, this);
-					console.log(this.title)
-					downthepage = $("#" + this.title).position().top;
-					console.log(downthepage)
-					$("#content1").scrollTop(downthepage-$(window).height()*.1)
-					// console.log(top)
-					// $("#content1").animate({
-					// 		'scrollTop' : $("#" + this.title).position().top
-					// }, 'fast');
-					$("#" + this.title).css("border","2px solid var(--teal2)")
-					$(".card").not("#" + this.title).css("border","1px solid rgba(0, 0, 0, 0.125)")
-				});
+							google.maps.event.addListener(card, 'click', function() {
+								console.log("did it even get here")
+							   map.setCenter({lat: rawData[i]['lat'], lng: rawData[i]['lng'] });
+							   infowindow.setContent(contentStringRdr);
+							   infowindow.open(map,RdrMarker);
+							});
+
+							console.log(rawData[i]['lat'], rawData[i]['lon'])
+
+							var marker = new google.maps.Marker({
+								position: {lat: rawData[i]['lat'],lng: rawData[i]['lon']},
+								map: map,
+								title: "user_" + String(rawData[i]['uid']),
+								info: contentString,
+								icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+							});
+
+							var wait = google.maps.event.addListener(marker, 'click', function() {
+								$("#content1").scrollTop(0)
+								infowindow.setContent(this.info);
+								infowindow.open(map, this);
+								console.log(this.title)
+								downthepage = $("#" + this.title).position().top;
+								console.log(downthepage)
+								$("#content1").scrollTop(downthepage-$(window).height()*.1)
+								// console.log(top)
+								// $("#content1").animate({
+								// 		'scrollTop' : $("#" + this.title).position().top
+								// }, 'fast');
+								$("#" + this.title).css("border","2px solid var(--teal2)")
+								$(".card").not("#" + this.title).css("border","1px solid rgba(0, 0, 0, 0.125)")
+							});
+
+							$("#loader").remove();
+							$("#loader-wrapper").remove();
+					}
+
+		           })
+		           .fail(function(status){
+		              console.log('An error occured. Status: ' + status);
+		           });
+
 			}
-			$("#loader").remove();
-			$("#loader-wrapper").remove();
 		}
 
 		var map, infoWindow;
@@ -256,30 +343,27 @@
 		<div id="loader"></div>
 	</div>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="display: flex">
-		<div class="navbar-brand" href="#">Browse Nearby Shoppers</div>
+		<div class="navbar-brand" href="#">Browse Nearby Shoppers: </div>
 		<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button> -->
 
 		<div class="collapse navbar-collapse" id="navbarColor02">
-			<!-- <ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
-					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#">Features</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#">Pricing</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#">About</a>
-				</li>
-			</ul>
-			<form class="form-inline my-2 my-lg-0">
-				<input class="form-control mr-sm-2" type="text" placeholder="Search">
-				<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-			</form> -->
+				<!-- <div style="float: right;"><div style="margin: 0px" class = "navbar-brand">Show Users: -->
+				<div class="dropdown">
+					<select class="form-control" onchange="control(this.value)">
+						<!-- <optgroup> -->
+						  <option value = "1">1 mi away from me</option>
+						  <option value = "5">5 mi away from me</option>
+						  <option value = "10">10 mi away from me</option>
+						  <option value = "15">15 mi away from me</option>
+						  <option value = "20">20 mi away from me</option>
+						  <option value = "30">30 mi away from me</option>
+					      <option value = "50">50 mi away from me</option>>
+						</select>
+				</div>
+			</div>
+		</div>
 		</div>
 		<div class="btn-group">
 		  <button type="button" class="btn btn-secondary"><a href="/" style="color: white; text-decoration: none;">Back to Dashboard</a>
@@ -293,6 +377,7 @@
 		</div>
 		<div id="sidebar1">
 			<div id="map"></div>
+
 			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk&callback=control"></script>
 		</div>
 		<div id="cleared1"></div>
