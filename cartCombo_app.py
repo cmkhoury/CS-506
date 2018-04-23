@@ -4,11 +4,11 @@ import sqlite3 as sql
 import time
 import datetime
 import pdb
-import json
 import helper_function
 import json
-import json
 import requests
+from lxml import html
+
 app = Flask(__name__)
 lid = 990
 global msg
@@ -131,6 +131,34 @@ def new_user():
     #     return render_template('login.html')
 
     return render_template('addUser.html')
+
+@app.route('/wishlist', methods = ['POST', 'GET'])
+def wishlist():
+    # if not session.get('logged_in'):
+    #     return render_template('login.html')
+    id = request.args.get("id")
+    session_requests = requests.session()
+    result = session_requests.get("http://www.justinscarpetti.com/projects/amazon-wish-lister/api/?id=" + str(id))
+    # tree = html.fromstring(result.content)
+
+    # price = str(result.json()[0]['new-price'])
+
+
+    with sql.connect(db) as con:
+        cur = con.cursor()
+        for x in range(0,len(result.json())):
+            description = str(result.json()[x]['name'])
+            print(description)
+            cur.execute("INSERT INTO Item (DESCRIPTION, SID) VALUES ('" + description + "', 'AMAZON')")
+            con.commit()
+    con.close()
+
+
+    # http://www.justinscarpetti.com/projects/amazon-wish-lister/api/?id=3SE72T48T8WG6
+     # response = requests.get(call)
+    print(result.json())
+    var1 = result.json()[0]['comment']
+    return str(result.json()[0]['new-price'])
 
 #CREATE TABLE User(
 #  UID INTEGER PRIMARY KEY,
