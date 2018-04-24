@@ -268,7 +268,7 @@ def wishlist():
     # http://www.justinscarpetti.com/projects/amazon-wish-lister/api/?id=3SE72T48T8WG6
      # response = requests.get(call)
     #print(result.json())
-    
+
     return str(result.json())
 
 #CREATE TABLE User(
