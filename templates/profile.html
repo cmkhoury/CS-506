@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html ng-app="ProfileApp">
 
 <head>
     <!-- This is the Profile Page -->
@@ -10,6 +10,8 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='default_style.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="{{ url_for('static',filename='js/profile.js') }}"></script>
 
     <style type="text/css">
         .title {
@@ -225,22 +227,22 @@
         </div>
 
         <!-- CART ADD MODAL -->
-    <div class="modal" id="cartModal">
+    <div class="modal" id="cartModal" ng-controller="ImportCartCtrl">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Import Cart:</h5>
+                        <h5 class="modal-title">Import Cart: {{'{{greeting}}'}}</h5>
                         <button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <input type="text" class="form-control" id="email" placeholder="Wishlist ID #" required>
+                            <input type="text" class="form-control" id="email" placeholder="Wishlist ID #" required ng-model="wishtlistID">
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onClick="closeModal()">Save changes</button>
+                        <button type="button" class="btn btn-primary" ng-click="importCart()">Import Cart</button>
                     </div>
                 </div>
             </div>
@@ -312,7 +314,7 @@
                             <!-- </section> -->
                             <div class="col-8">
                 <!-- <section> -->
-                <div class="card bg-light bg-6" style="background-color: var(--light);">
+                <div class="card bg-light bg-6" style="background-color: var(--light);" ng-controller="ImportCartCtrl">
                     <div class="card-header" style="background-color: var(--navy2); color: white">Your Current Carts:
                     <button type="button" style="float: right; background-color: white; color: var(--darkblue); text-decoration: none" class="btn btn-secondary" onclick="showModal('cart')"><small>Import Carts</small></button>
                     </div>
