@@ -14,7 +14,7 @@ def main():
             curs = con.cursor()
             session_requests = requests.session()
 
-            query = "SELECT * FROM User WHERE UID > 0"
+            query = "SELECT * FROM User WHERE UID = 692"
             missingLatLon = con.execute(query)
             for row in missingLatLon:
                 # 1, None, ckhoury, password, ckhoury@wisc.ed, 44 Clay Street, Yonkers, New York, 10701, Cam, Khoury, None, None, None)
