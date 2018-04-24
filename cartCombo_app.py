@@ -205,7 +205,7 @@ def profile():
         user.append(rows[x]['LastName'])
         unRatedUsers.append(user)
 
-    return render_template('profile.html', profile = profile, listOfItems = listofItems, listOfCarts = listOfCarts, numItemss = len(listofItems), unRatedUsers = unRatedUsers)
+    return render_template('profile.html', profile = profile, unRatedUsers = unRatedUsers)
 
 
 @app.route('/addUser', methods = ['POST', 'GET'])
