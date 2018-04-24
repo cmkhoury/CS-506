@@ -175,6 +175,7 @@ def profile():
 
     listOfCarts = [];
     listofItems = [];
+    unRatedUsers = [];
 
     for x in range(0, len(rows)):
       cart = dict()
@@ -189,7 +190,19 @@ def profile():
       item['quantity'] = rows[x]['Quantity']
       if(item not in listofItems): listofItems.append(item)
 
-    return render_template('profile.html', profile = profile, listOfItems = listofItems, listOfCarts = listOfCarts, numItemss = len(listofItems))
+    number = 15;
+    query = "SELECT * FROM User WHERE UID < \'" + str(number) + "\'"
+    cur.execute(query)
+    rows = cur.fetchall()
+
+    for x in range(0, len(rows)):
+        user = []
+        user.append(rows[x]['Username'])
+        user.append(rows[x]['FirstName'])
+        user.append(rows[x]['LastName'])
+        unRatedUsers.append(user)
+
+    return render_template('profile.html', profile = profile, listOfItems = listofItems, listOfCarts = listOfCarts, numItemss = len(listofItems), unRatedUsers = unRatedUsers)
 
 
 @app.route('/addUser', methods = ['POST', 'GET'])

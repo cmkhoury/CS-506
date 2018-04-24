@@ -33,7 +33,6 @@
         .btn-group {
             float: right;
         }
-
         .btn-secondary {
             margin-left: 5%;
             padding-top: 2px;
@@ -55,6 +54,15 @@
         }
         #pen {
             margin-right:.5em;
+        }
+        #ratebutton {
+            position: absolute;
+            right: 25px;
+            border-radius: 4px;
+            padding-left: 4.5px;
+            padding-right: 4.5px;
+            padding-top: 2px;
+            padding-bottom: 2px;
         }
     </style>
 </head>
@@ -136,88 +144,88 @@
 
     <!-- NAME MODAL -->
     <div class="modal" id="nameModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Names:</h5>
+                        <button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" name="inputAddress" class="form-control" id="firstname" placeholder="First Name" value = "{{profile['firstname']}}"required><br>
+                            <input type="text" name="inputAddress" class="form-control" id="lastname" placeholder="" value = "{{profile['lastname']}}"required><br>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onClick="editData(['firstname','lastname'])">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    <!-- ADDRESS MODAL -->
+    <div class="modal" id="addressModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Names:</h5>
-                    <button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+                    <h5 class="modal-title">Edit Shipping Address:</h5>
+                    <button type="button" class="close" data-dismiss="modal" onClick="closeModal()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <input type="text" name="inputAddress" class="form-control" id="firstname" placeholder="First Name" value = "{{profile['firstname']}}"required><br>
-                        <input type="text" name="inputAddress" class="form-control" id="lastname" placeholder="" value = "{{profile['lastname']}}"required><br>
+                        <input type="text" class="form-control" id="address" placeholder="Street Address" value = "{{profile['address']}}">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" id="city" placeholder="City" value = "{{profile['city']}}">
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <input type="text" class="form-control" id="state" placeholder="State" value = "{{profile['state']}}">
+
+                        </div>
+                        <div class="form-group col-md-2">
+                            <input type="text" class="form-control" id="zip" placeholder="Zip" value = "{{profile['zip']}}">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onClick="editData(['firstname','lastname'])">Save changes</button>
+                    <button type="button" class="btn btn-primary" onClick="editData(['address','city','state','zip'])">Save changes</button>
                 </div>
             </div>
         </div>
     </div>
 
-
-<!-- ADDRESS MODAL -->
-<div class="modal" id="addressModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Shipping Address:</h5>
-                <button type="button" class="close" data-dismiss="modal" onClick="closeModal()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <input type="text" class="form-control" id="address" placeholder="Street Address" value = "{{profile['address']}}">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <input type="text" class="form-control" id="city" placeholder="City" value = "{{profile['city']}}">
-                    </div>
-
-                    <div class="form-group col-md-4">
-                        <input type="text" class="form-control" id="state" placeholder="State" value = "{{profile['state']}}">
-
-                    </div>
-                    <div class="form-group col-md-2">
-                        <input type="text" class="form-control" id="zip" placeholder="Zip" value = "{{profile['zip']}}">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onClick="editData(['address','city','state','zip'])">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- CONTACT MODAL -->
+    <!-- CONTACT MODAL -->
     <div class="modal" id="contactModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Contact Information:</h5>
-                    <button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="email" placeholder="Email Address" value= "{{profile['email']}}" required>
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Contact Information:</h5>
+                        <button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onClick="editData(['email'])">Save changes</button>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="email" placeholder="Email Address" value= "{{profile['email']}}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onClick="editData(['email'])">Save changes</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- CART ADD MODAL -->
-        <div class="modal" id="cartModal">
+        <!-- CART ADD MODAL -->
+    <div class="modal" id="cartModal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -242,13 +250,27 @@
         <div class="row">
             <div class="col-4">
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
+                    <div class="card-header" style="background-color: var(--darkorange); color: white">
+
+                        Past Matches:</div>
+                    <div class="card-body" style="padding: 1rem">
+                        {% for user in unRatedUsers %}
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item active">{{user[1]}} {{user[2]}}</li>
+                          <button type="button" id=ratebutton sytle = "position: absolute; right: 15px;" class="btn btn-success" >Rate</button>
+                        </ol>
+                        <!-- <p class="card-text"><strong>Email:</strong>
+                            <span id="email_p">{{user[0]}}</span></p> -->
+                            {% endfor %}
+                    </div>
+                </div>
+                <div class="card bg-light mb-3" style="background-color: var(--light);">
                     <div class="card-header" style="background-color: var(--teal1); color: white">
 
                         <a href="#"><img id="pen" data-toggle="modal" src="{{ url_for('static',filename='images/edit.png') }}" width="15em" onclick="showModal('name')"/></a> Aliases:
 
                     </div>
                     <div class="card-body">
-                        <p class="card-text">
                             <div>
                             <strong>Username</strong>: {{profile['username']}}<br>
                             </div>
@@ -259,7 +281,6 @@
                         <div>
                             <strong>Last Name</strong>: <span id="lastname_p"> {{profile['lastname']}}</span>
                         </div>
-                        </p>
                     </div>
                 </div>
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
@@ -287,83 +308,44 @@
                             <span id="email_p">{{profile['email']}}</span></p>
                     </div>
                 </div>
-                <!-- </section> -->
             </div>
-            <!-- </div> -->
-            <!-- <div class="wrapper"> -->
-            <!-- <div class="card border-secondary mb-3" style="max-width: 20rem;">
-                      <div class="card-header">Header</div>
-                      <div class="card-body">
-                        <h4 class="card-title">Secondary card title</h4>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                      </div>
-                    </div> -->
-            <div class="col-8">
+                            <!-- </section> -->
+                            <div class="col-8">
                 <!-- <section> -->
                 <div class="card bg-light bg-6" style="background-color: var(--light);">
                     <div class="card-header" style="background-color: var(--navy2); color: white">Your Current Carts:
                     <button type="button" style="float: right; background-color: white; color: var(--darkblue); text-decoration: none" class="btn btn-secondary" onclick="showModal('cart')"><small>Import Carts</small></button>
-
-                </div>
-
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% for cart in listOfCarts %}
-                        <div class="card-body">
-                            <div class="card border-secondary">
-                                <div>
-                                    <h6 class="card-header" style="text-align:left;">ID #{{cart['cartID']}}
-                                          <span style="float:right;"></span>
-                                      </h6>
-                                </div>
-
-                                <div class="card-body">
-                                    {% for item in listOfItems %} {% if item["cartID"] == cart['cartID']%}
-                                    <!-- <p class="card-text"> -->
-                                    <p style="text-align:left; margin-bottom: .5em">
-                                        {{item['description']}} (ID: {{item['itemID']}}):
-                                        <span style="float:right;">${{item['price']}}</span>
-                                        <!-- </p> -->
-                                    </p>
-                                    {% endif %} {% endfor %}
-                                </div>
-                                <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: ${{cart['total']}}</div>
-                            </div>
-                        </div>
-                        <!-- <div class="card-text"><strong style="color:red">CartID: </strong> {{cart['cartID']}} ({{cart['total']}})</div>
-                        {% for item in listOfItems %} {% if item["cartID"] == cart['cartID']%}
-                        <p style="text-align:left;">
-                            {{item['description']}} (ID: {{item['itemID']}}):
-                            <span style="float:right;">${{item['price']}}</span>
-                        </p> -->
-
-                        <!-- {% endif %} {% endfor %} -->
-                        <hr/> {% endfor %}
-
-                        <!-- <div class="card-body">
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for cart in listOfCarts %}
+                            <div class="card-body">
                                 <div class="card border-secondary">
                                     <div>
-                                        <h6 class="card-header" style="text-align:left;">ID #3051
+                                        <h6 class="card-header" style="text-align:left;">ID #{{cart['cartID']}}
                                           <span style="float:right;"></span>
                                       </h6>
                                     </div>
 
                                     <div class="card-body">
-
+                                        {% for item in listOfItems %} {% if item["cartID"] == cart['cartID']%}
+                                        <!-- <p class="card-text"> -->
                                         <p style="text-align:left; margin-bottom: .5em">
-                                            Colorful Mister: (ID: #4 01)
-                                            <span style="float:right;">$20.50$</span>
-
+                                            {{item['description']}} (ID: {{item['itemID']}}):
+                                            <span style="float:right;">${{item['price']}}</span>
+                                            <!-- </p> -->
                                         </p>
+                                        {% endif %} {% endfor %}
                                     </div>
+                                    <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: ${{cart['total']}}</div>
                                 </div>
-                            </div> -->
-
+                            </div>
+                            <hr/> {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
     </div>
 </body>
 </html>
