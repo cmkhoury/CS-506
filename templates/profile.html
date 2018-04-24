@@ -231,7 +231,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Import Cart: {{'{{greeting}}'}}</h5>
+                        <h5 class="modal-title">Import Cart: </h5>
                         <button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
@@ -320,29 +320,26 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            {% for cart in listOfCarts %}
-                            <div class="card-body">
+                            <div class="card-body" ng-repeat="cart in listOfCarts">
                                 <div class="card border-secondary">
                                     <div>
-                                        <h6 class="card-header" style="text-align:left;">ID #{{cart['cartID']}}
+                                        <h6 class="card-header" style="text-align:left;">ID #{{'{{cart["cartID"]}}'}}
                                           <span style="float:right;"></span>
                                       </h6>
                                     </div>
 
-                                    <div class="card-body">
-                                        {% for item in listOfItems %} {% if item["cartID"] == cart['cartID']%}
+                                    <div class="card-body" ng-repeat="item in listOfItems" ng-if="item['cartID']==cart['cartID']">
                                         <!-- <p class="card-text"> -->
                                         <p style="text-align:left; margin-bottom: .5em">
-                                            {{item['description']}} (ID: {{item['itemID']}}):
-                                            <span style="float:right;">${{item['price']}}</span>
+                                            {{'{{item["description"]}}'}} (ID: {{'{{item["itemID"]}}'}}):
+                                            <span style="float:right;">${{'{{item["price"]}}'}}</span>
                                             <!-- </p> -->
                                         </p>
-                                        {% endif %} {% endfor %}
                                     </div>
-                                    <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: ${{cart['total']}}</div>
+                                    <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: ${{'{{cart["total"]}}'}}</div>
                                 </div>
                             </div>
-                            <hr/> {% endfor %}
+                            <hr/>
                         </div>
                     </div>
                 </div>
