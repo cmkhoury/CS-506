@@ -193,7 +193,7 @@ def profile():
       item['quantity'] = rows[x]['Quantity']
       if(item not in listofItems): listofItems.append(item)
 
-    number = 15;
+    number = 10;
     query = "SELECT * FROM User WHERE UID < \'" + str(number) + "\'"
     cur.execute(query)
     rows = cur.fetchall()

@@ -56,13 +56,27 @@
             margin-right:.5em;
         }
         #ratebutton {
-            position: absolute;
-            right: 25px;
+            /*position: absolute;*/
+            /*right: 25px;*/
             border-radius: 4px;
             padding-left: 4.5px;
             padding-right: 4.5px;
             padding-top: 2px;
             padding-bottom: 2px;
+            margin-left: 10px;
+        }
+        #matches {
+            margin-left: 0px;
+            margin-right: 0px;
+            padding:0em;
+
+        }
+        .breadcrumb {
+            margin-bottom: .5em;
+            margin-left: .5em;
+            margin-top: .5em;
+            padding: .5em;
+
         }
     </style>
 </head>
@@ -90,11 +104,16 @@
             if (modal=="name") { $('#nameModal').show()}
             else if (modal=="address") { $('#addressModal').show()}
             else if (modal=="contact") { $('#contactModal').show()}
+            else if (modal=="rate") {
+                // $( "#rateModal h5" ).text( "hello" );
+                $('#rateModal').show()
+            }
             else if (modal=="cart") { $('#cartModal').show()}
             $('.wrapper').css("opacity", "0.25")
         }
         function closeModal() {
             $('.modal').hide()
+            // $('#rateModal .modal-content').remove("h5")
             $('.wrapper').css("opacity", "1.0")
         }
         function clear(id) {
@@ -225,6 +244,8 @@
         </div>
 
         <!-- CART ADD MODAL -->
+
+    <!-- CART MODAL -->
     <div class="modal" id="cartModal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -246,6 +267,32 @@
             </div>
         </div>
 
+    <!-- Rate MODAL -->
+    <div class="modal" id="rateModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+<h5> Rating User: </h5>
+                        <button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+                    </div>
+                    <div class="modal-body">
+                        <select id="example" style="width: 100px">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onClick="closeModal()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <div class="wrapper" style="margin-top: 20px">
         <div class="row">
             <div class="col-4">
@@ -253,16 +300,20 @@
                     <div class="card-header" style="background-color: var(--darkorange); color: white">
 
                         Past Matches:</div>
-                    <div class="card-body" style="padding: 1rem">
-                        {% for user in unRatedUsers %}
-                        <ol class="breadcrumb">
-                          <li class="breadcrumb-item active">{{user[1]}} {{user[2]}}</li>
-                          <button type="button" id=ratebutton sytle = "position: absolute; right: 15px;" class="btn btn-success" >Rate</button>
-                        </ol>
-                        <!-- <p class="card-text"><strong>Email:</strong>
-                            <span id="email_p">{{user[0]}}</span></p> -->
+
+                        {% set columns = 1 %}
+                        <div class="row" id="matches">
+                            {% for user in unRatedUsers %}
+                            <ol class="breadcrumb">
+                              <li class="breadcrumb-item active">{{user[1]}} {{user[2]}}</li>
+                              <button type="button" id=ratebutton value="[{{user[0]}},{{user[1]}},{{user[2]}}]" class="btn btn-success" onClick="showModal('rate')" >Rate</button>
+                            </ol>
+                                {% if loop.index % columns %}
+                                    </div>
+                                    <div class="row" id="matches">
+                                {% endif %}
                             {% endfor %}
-                    </div>
+                        </div>
                 </div>
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
                     <div class="card-header" style="background-color: var(--teal1); color: white">

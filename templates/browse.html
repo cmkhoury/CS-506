@@ -151,7 +151,7 @@
 
 		//Ajax call:
 		async function control(limit) {
-			if (!limit) { limit = 5}
+			if (!limit) { limit = 500}
 
 			console.log( parseInt(limit))
 			await initMap()
@@ -339,9 +339,9 @@
 </head>
 
 <body>
-	<div id="loader-wrapper">
+	<!-- <div id="loader-wrapper">
 		<div id="loader"></div>
-	</div>
+	</div> -->
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="display: flex">
 		<div class="navbar-brand" href="#">Browse Nearby Shoppers: </div>
 		<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
