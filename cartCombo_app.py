@@ -9,7 +9,7 @@ import json
 import requests
 import re
 import time
-from lxml import html
+#from lxml import html
 
 
 app = Flask(__name__)
