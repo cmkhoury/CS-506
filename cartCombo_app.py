@@ -4,11 +4,14 @@ import sqlite3 as sql
 import time
 import datetime
 import pdb
-import json
 import helper_function
 import json
-import json
 import requests
+import re
+import time
+from lxml import html
+
+
 app = Flask(__name__)
 lid = 990
 global msg
@@ -211,6 +214,62 @@ def new_user():
     #     return render_template('login.html')
 
     return render_template('addUser.html')
+
+@app.route('/wishlist', methods = ['POST', 'GET'])
+def wishlist():
+    # if not session.get('logged_in'):
+    #     return render_template('login.html')
+    id = request.args.get("id")
+    session_requests = requests.session()
+    result = session_requests.get("http://www.justinscarpetti.com/projects/amazon-wish-lister/api/?id=" + str(id))
+
+    if(len(result.json()) == 0):
+        for x in range (0,3):
+            result = session_requests.get("http://www.justinscarpetti.com/projects/amazon-wish-lister/api/?id=" + str(id))
+            time.sleep(.5)
+
+    # tree = html.fromstring(result.content)
+    # $(.*?)\$
+    #print(str(result.json()[0]['new-price']))
+
+
+    with sql.connect(db) as con:
+        cur = con.cursor()
+        cur.execute("INSERT INTO Cart (UID) VALUES ('" + str(UID) + "')")
+        #cur.commit()
+        cur.execute("SELECT last_insert_rowid()")
+        cartID = cur.fetchall()[0][0]
+        print(cartID)
+
+        for x in range(0,len(result.json())):
+            description = str(result.json()[x]['name'])
+            tempPrice = re.search(r"\$(.*?)\<", str(result.json()[x]['new-price']), 0)
+            price = tempPrice.groups()[0]
+            #print(description)
+            cur.execute("SELECT DESCRIPTION, IID FROM Item WHERE DESCRIPTION = '" + description +"'")
+            results = cur.fetchall()
+
+            if (len(results) == 0):
+                cur.execute("INSERT INTO Item (DESCRIPTION, SID, PRICE) VALUES ('" + description + "', 'AMAZON', '" + price + "')")
+                con.commit()
+                cur.execute("SELECT last_insert_rowid()")
+                itemID = cur.fetchall()[0][0]
+                print(itemID)
+            else:
+                itemID = results[0][1]
+                cur.execute("UPDATE Item SET DESCRIPTION = '" + description + "', SID = 'AMAZON', PRICE = '" + price + "' WHERE DESCRIPTION = '" + description + "'")
+                con.commit()
+                print(itemID)
+
+            cur.execute("INSERT INTO CartItem(CID, IID) VALUES ('" + str(cartID) + "', '"+ str(itemID) +"')")
+    con.close()
+
+
+    # http://www.justinscarpetti.com/projects/amazon-wish-lister/api/?id=3SE72T48T8WG6
+     # response = requests.get(call)
+    #print(result.json())
+    
+    return str(result.json())
 
 #CREATE TABLE User(
 #  UID INTEGER PRIMARY KEY,
