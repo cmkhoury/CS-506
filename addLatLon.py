@@ -14,7 +14,7 @@ def main():
             curs = con.cursor()
             session_requests = requests.session()
 
-            query = "SELECT * FROM User WHERE UID > 733"
+            query = "SELECT * FROM User WHERE UID > 0"
             missingLatLon = con.execute(query)
             for row in missingLatLon:
                 # 1, None, ckhoury, password, ckhoury@wisc.ed, 44 Clay Street, Yonkers, New York, 10701, Cam, Khoury, None, None, None)
@@ -42,7 +42,7 @@ def main():
                 for new in checkUpdate:
                     if (str(new[11]) != lat) or (str(new[12]) != lon): print("Lat / Lon Mismatch between geocoded value and value in database")
 
-            con.commit()
+                con.commit()
 
                 # print("Found " +  str(row[0]))
 
