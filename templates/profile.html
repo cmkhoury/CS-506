@@ -82,6 +82,7 @@
             if (modal=="name") { $('#nameModal').show()}
             else if (modal=="address") { $('#addressModal').show()}
             else if (modal=="contact") { $('#contactModal').show()}
+            else if (modal=="cart") { $('#cartModal').show()}
             $('.wrapper').css("opacity", "0.25")
         }
         function closeModal() {
@@ -215,6 +216,28 @@
         </div>
     </div>
 
+    <!-- CART ADD MODAL -->
+        <div class="modal" id="cartModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Import Cart:</h5>
+                        <button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="email" placeholder="Wishlist ID #" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onClick="closeModal()">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <div class="wrapper" style="margin-top: 20px">
         <div class="row">
             <div class="col-4">
@@ -279,7 +302,7 @@
                 <!-- <section> -->
                 <div class="card bg-light bg-6" style="background-color: var(--light);">
                     <div class="card-header" style="background-color: var(--navy2); color: white">Your Current Carts:
-                    <button type="button" style="float: right; background-color: white; color: var(--darkblue); text-decoration: none" class="btn btn-secondary"><small>Import Carts</small></button>
+                    <button type="button" style="float: right; background-color: white; color: var(--darkblue); text-decoration: none" class="btn btn-secondary" onclick="showModal('cart')"><small>Import Carts</small></button>
 
                 </div>
 
