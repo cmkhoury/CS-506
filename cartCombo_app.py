@@ -6,10 +6,10 @@ import datetime
 import pdb
 import helper_function
 import json
-#import requests
+import requests
 import re
 import time
-#from lxml import html
+from lxml import html
 
 
 app = Flask(__name__)
