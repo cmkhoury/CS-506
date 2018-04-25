@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<!-- This is the Browse Page -->
 	<title>Browse Nearby Shoppers</title>
@@ -12,7 +11,7 @@
 	<!-- <link rel='stylesheet' media="screen and (min-width: 701px)' href='{{ url_for('static',filename='medium_style.css') }}" /> -->
 	<!-- <script href="{{ url_for('static',filename='bootstrap.min.js') }}"></script> -->
 	<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> -->
 
 	<style type="text/css">
 		:root {
@@ -34,7 +33,12 @@
 		p, h2{
 			padding:0px;
 		}
-		.card-body p {color: grey;}
+		p {
+			margin-bottom: 0px;
+		}
+		.card-body p {
+			color: grey;
+		}
 		.maps {
 		    display: block;
 		    margin: 0 auto;
@@ -113,29 +117,48 @@
 		.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
 			background-color: var(--orange2);
 		}
+		#ratebutton {
+			/*position: absolute;
+			right: 25px;*/
+			float: right;
+			border-radius: 4px;
+			padding-left: 4.5px;
+			padding-right: 4.5px;
+			padding-top: 2px;
+			padding-bottom: 2px;
+			margin-left: 10px;
+		}
+		#extracontent {
+			margin-top: 1em;
+			display: none;
+		}
+
+		.table th, .table td {
+			padding: 1px;
+		}
 		.dropdown {
-    position: relative;
-    display: inline-block;
-	font-size: 100px;
-}
+		    position: relative;
+		    display: inline-block;
+			font-size: 100px;
+		}
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    padding: 12px 16px;
-    z-index: 1;
-}
+		.dropdown-content {
+		    display: none;
+		    position: absolute;
+		    background-color: #f9f9f9;
+		    min-width: 160px;
+		    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		    padding: 12px 16px;
+		    z-index: 1;
+		}
 
-/*.dropdown:hover .dropdown-content {
-    display: block;
-}*/
-.dropdown-item {
-	cursor: -webkit-grab;
-    padding: 0px;
-}
+		/*.dropdown:hover .dropdown-content {
+		    display: block;
+		}*/
+		.dropdown-item {
+			cursor: -webkit-grab;
+		    padding: 0px;
+		}
 
 	</style>
 	<script type="text/javascript">
@@ -143,11 +166,34 @@
 		var state = '{{state}}'
 		var uid = '{{uid}}'
 		var userInformation
-		var plusAddresses = []
 
 		// function startSpinningWheel() {
 		//     setTimeout(control, 0);
 		// }
+
+		function showModal(modal, id, name) {
+			if (modal=="match") {
+				$('#matchModal').show()
+				console.log(id)
+				$('.modal-footer').append("<button type='button' class='btn btn-primary' onClick='submitMatch(\"" + id + "\")'>Yes, match!</button>")
+				$("<div class='modal-body'>This will send an email to " + name + " with your match request.  Click below to continue.</div>").insertAfter(".modal-header")
+				$('#wrapper1').css("opacity", "0.20")
+
+			}
+		}
+
+		function closeModal() {
+			$('.modal').hide()
+			$('#matchModal .modal-body').remove()
+			// $('#rateModal .modal-content').remove("h5")
+			$("#matchModal .btn-primary").remove()
+			$('#wrapper1').css("opacity", "1.0")
+		}
+
+		function submitMatch(otherID) {
+			console.log("my ID: ", {{uid}}, "other ID: ", otherID)
+			closeModal();
+		}
 
 		//Ajax call:
 		async function control(limit) {
@@ -233,17 +279,41 @@
 								'</div>' +
 								'</div>';
 
-							var card = $("#content1").append("<div class=\"card\" + onclick=\"clickroute(" + rawData[i]['lat'] + ", " + rawData[i]['lon'] + ")\" id=\"user_" + rawData[i]['uid'] + "\"" + " style=\"margin: .5em\">" +
-													"<div class=\"card-body\" style=\"padding: .75em;\">" +
-													"<h6 class=\"card-title\">" + rawData[i]['firstname'] + " " + rawData[i]['lastname'] + "</h6>" +
-													// "<h class=\"card-subtitle mb-2 text-muted\">Card subtitle</h6>" +
-													"<p class=\"card-text\">" +
+							// "<h class=\"card-subtitle mb-2 text-muted\">Card subtitle</h6>" +
+
+
+							var table = "<table class='table'>" +
+										"<thead>" +
+										"<tr>" + rawData[i]['firstname'] + "'s Cart</tr>" +
+										"<tr>" +
+										"<th scope='col'>#</th>" +
+										"<th scope='col'>Item</th>" +
+										"<th scope='col'>Cost</th>" +
+										"</tr></thead>" +
+										"<tbody>" +
+										"<tr><th scope='row'>1</th><td>Mark</td><td>Otto</td></tr>" +
+										"<tr><th scope='row'>2</th><td>Mark</td><td>Otto</td></tr>" +
+										"</tbody></table>"
+
+							var extracontent = "<div id='extracontent'>" +
+												table +
+												"<button type='button' id=ratebutton class='btn btn-success' onClick='showModal(\"match\", \"" + rawData[i]['uid'] + "\", \"" + rawData[i]['firstname'] + "\")'>Match with " + rawData[i]['firstname'] +"</button>" +
+												// "<a href=\"#\" class=\"card-link\">Card link</a>" +
+												// "<a href=\"#\" class=\"card-link\">Another link</a>" +
+												"</div>"
+
+							var card = $("#content1").append("<div class='card' + onclick='cardclick(" + rawData[i]['lat'] + ", " + rawData[i]['lon'] + ", \"#user_" + rawData[i]['uid'] + "\")' id='user_" + rawData[i]['uid'] + "'" + " style='margin: .5em'>" +
+													"<div class='card-body' style='padding: 0.75em'>" +
+													"<h6 class='card-title'>" + rawData[i]['firstname'] + " " + rawData[i]['lastname'] + "</h6>" +
+													"<p class='card-text'>" +
 													rawData[i]['firstname'] + " lives in " + rawData[i]['city'] + ", " + rawData[i]['state'] +
 													".  Their username is " + rawData[i]['username'] +". <br>They're " + distance + " away from you.</p>" +
-													// "<a href=\"#\" class=\"card-link\">Card link</a>" +
-													// "<a href=\"#\" class=\"card-link\">Another link</a>" +
+													extracontent +
 													"</div>" +
 													"</div>")
+
+							// var cardPrompt = $(".card-body p").append("<div>HI </div>")
+
 							$(".card").click(function() {
 									  $(this).css("border", "2px solid var(--teal2)")
 									  $(".card").not(this).css("border","1px solid rgba(0, 0, 0, 0.125)")
@@ -268,18 +338,24 @@
 
 							var wait = google.maps.event.addListener(marker, 'click', function() {
 								$("#content1").scrollTop(0)
+
+								var card = "#" + this.title
+								var extracontent = "#" + this.title + " #extracontent"
+
 								infowindow.setContent(this.info);
 								infowindow.open(map, this);
-								console.log(this.title)
-								downthepage = $("#" + this.title).position().top;
-								console.log(downthepage)
+								// console.log(this.title)
+								downthepage = $(card).position().top;
+								// console.log(downthepage)
 								$("#content1").scrollTop(downthepage-$(window).height()*.1)
 								// console.log(top)
 								// $("#content1").animate({
 								// 		'scrollTop' : $("#" + this.title).position().top
 								// }, 'fast');
-								$("#" + this.title).css("border","2px solid var(--teal2)")
-								$(".card").not("#" + this.title).css("border","1px solid rgba(0, 0, 0, 0.125)")
+								$(card).css("border","2px solid var(--teal2)")
+								$(extracontent).show(50)
+								$(".card #extracontent").not(extracontent).css("display","none")
+								$(".card").not(card).css("border","1px solid rgba(0, 0, 0, 0.125)")
 							});
 
 							$("#loader").remove();
@@ -295,12 +371,14 @@
 		}
 
 		var map, infoWindow;
-		function expand() {
-			console.log("implement expand box when .card is clicked, this will show more user information")
+		function expand(id) {
+			// console.log(id)
+			$(id + " #extracontent").show(50);
+			$(".card #extracontent").not(id + " #extracontent").css("display","none")
 		}
 
-		function clickroute(lat, long) {
-			expand()
+		function cardclick(lat, long, id) {
+			expand(id)
 	        var latLng = new google.maps.LatLng(lat, long);
 	        map.panTo(latLng);
 	    }
@@ -342,6 +420,27 @@
 	<!-- <div id="loader-wrapper">
 		<div id="loader"></div>
 	</div> -->
+	<!-- NAME MODAL -->
+	<div class="modal" id="matchModal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Matching:<h5>
+						<button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+					</div>
+					<!-- <div class="modal-body">
+						<div class="form-group">
+							<input type="text" name="inputAddress" class="form-control" id="firstname" placeholder="First Name" value = ""required>
+						</div>
+					</div> -->
+					<div class="modal-footer"></div>
+				</div>
+			</div>
+		</div>
+
+
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="display: flex">
 		<div class="navbar-brand" href="#">Browse Nearby Shoppers: </div>
 		<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
