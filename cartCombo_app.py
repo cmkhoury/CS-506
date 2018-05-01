@@ -116,7 +116,6 @@ def map():
     return render_template('browse.html', lat = rows[0]['Lat'], lon = rows[0]['Lon'], state = rows[0]['State'], uid = rows[0]['UID'])
 
 @app.route('/api/nearbyShoppers')
-
 def nearbyShoppers():
     con = sql.connect(db)
     con.row_factory = sql.Row
@@ -146,6 +145,116 @@ def nearbyShoppers():
 
     return json.dumps(results)
 
+@app.route('/api/createMatch')
+def createMatch():
+    otherID = request.args.get('otherID');
+
+	# `PMID`	INTEGER,
+	# `UID1`	INTEGER,
+	# `UID2`	INTEGER,
+	# `STATUS1`	BOOLEAN,
+	# `STATUS2`	BOOLEAN,
+	# `Cost`	NUMERIC,
+	# `Threshold`	NUMERIC,
+	# `SID`	INTEGER,
+	# FOREIGN KEY(`UID2`) REFERENCES `User`(`UID`),
+	# FOREIGN KEY(`UID1`) REFERENCES `User`(`UID`),
+	# PRIMARY KEY(`PMID`)
+
+    con = sql.connect(db)
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    uid = request.args.get('uid');
+    query1 = "SELECT * FROM PreMatch WHERE (UID1 = " + str(UID) + " AND UID2 = " + str(otherID) + ") OR (UID1 = " + str(otherID) + " AND UID2 = " + str(UID) + ")"
+
+    cur.execute(query1)
+    rows = cur.fetchall()
+    results = list()
+
+    if len(rows) > 0: return "Match already exists"
+
+    query2 = "INSERT INTO PreMatch (UID1, UID2, STATUS1, STATUS2, Cost, Threshold) VALUES (" + str(UID) + ", " + str(otherID) + ", 1, 0, 0, 0 )"
+    cur.execute(query2)
+    con.commit();
+    # //write an email with http://127.0.0.1:5000/acceptMatch?uid1=&&uid2=
+
+    # sender = "ShippingPartnerFinder@gmail.com"
+    # query3 = "SELECT Email FROM User WHERE UID = \'" + str(otherID) + "\'"
+    # cur.execute(query3)
+    # receiver = cur.fetchall()[0][0]
+    #
+    # s = smtplib.SMTP('smtp.gmail.com',587)
+    # s.ehlo()
+    # s.starttls()
+    # s.login("ShippingPartnerFinder@gmail.com", "ShippingPartnerFinderPassword")
+    # msg = "\r\n".join(["From: "+sender,"To: "+receiver,"Subject: [CartCombo]You have a matching request!","","Hello,\n Someone want to be your shipping partner!\n You can contact with him/her by "+sender+" or check our website and merge your carts!\n"])
+    # s.sendmail("ShippingPartnerFinder@gmail.com", receiver, msg)
+    # s.quit()
+    return "success"
+
+@app.route('/api/determineStatus')
+def determineStatus():
+    otherID = request.args.get('otherID');
+
+	# `PMID`	INTEGER,
+	# `UID1`	INTEGER,
+	# `UID2`	INTEGER,
+	# `STATUS1`	BOOLEAN,
+	# `STATUS2`	BOOLEAN,
+	# `Cost`	NUMERIC,
+	# `Threshold`	NUMERIC,
+	# `SID`	INTEGER,
+	# FOREIGN KEY(`UID2`) REFERENCES `User`(`UID`),
+	# FOREIGN KEY(`UID1`) REFERENCES `User`(`UID`),
+	# PRIMARY KEY(`PMID`)
+
+    con = sql.connect(db)
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    uid = request.args.get('otherID');
+    query1 = "SELECT * FROM PreMatch WHERE (UID1 = " + str(UID) + " AND UID2 = " + str(otherID) + ") OR (UID1 = " + str(otherID) + " AND UID2 = " + str(UID) + ")"
+
+    cur.execute(query1)
+    rows = cur.fetchall()
+    if len(rows) < 1 : return otherID
+    result = []
+    for x in range(0, len(rows)):
+        pair = dict()
+        pair["uid1"] = rows[x]['UID1'];
+        pair["uid2"] = rows[x]['UID2'];
+        pair["status1"] = rows[x]['status1'];
+        pair["status2"] = rows[x]['status2'];
+        result.append(pair)
+    return json.dumps(result);
+
+
+@app.route('/acceptMatch')
+def acceptMatch():
+    # if not session.get('logged_in'):
+    #     return render_template('login.html')
+
+    UID = request.args.get('uid1'); #logged in user
+    otherID = request.args.get('uid2');
+
+    con = sql.connect(db)
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    uid = request.args.get('uid');
+    query1 = "SELECT * FROM PreMatch WHERE (UID1 = " + str(UID) + " AND UID2 = " + str(otherID) + ") OR (UID1 = " + str(otherID) + " AND UID2 = " + str(UID) + ")"
+
+    cur.execute(query1)
+    rows = cur.fetchall()
+    results = list()
+
+    if len(rows) > 0:
+                        # cur.execute("UPDATE Item SET DESCRIPTION = '" + description + "', SID = 'AMAZON', PRICE = '" + price + "' WHERE DESCRIPTION = '" + description + "'")
+        query2 = "UPDATE PreMatch SET STATUS2 = 1 WHERE (UID1 = " + str(UID) + " AND UID2 = " + str(otherID) + ") OR (UID1 = " + str(otherID) + " AND UID2 = " + str(UID) + ")"
+        cur.execute(query2)
+        con.commit();
+        # query3 = "UPDATE PreMatch   WHERE (UID1 = " + str(UID) + " AND UID2 = " + str(otherID) + ") OR (UID1 = " + str(otherID) + " AND UID2 = " + str(UID) + ")"
+        return "match succesful: UID: " + UID + " UID2: " + otherID + " both accepted"
+
+
 @app.route('/profile')
 def profile():
     if not session.get('logged_in'):
@@ -164,6 +273,7 @@ def profile():
 
     profile = dict();
     profile['username']= rows[0]['Username']
+    profile['uid'] = rows[0]['UID']
     profile['firstname']= rows[0]['FirstName']
     profile['lastname'] = rows[0]['LastName']
     profile['email'] = rows[0]['Email']
@@ -203,6 +313,7 @@ def profile():
         user.append(rows[x]['Username'])
         user.append(rows[x]['FirstName'])
         user.append(rows[x]['LastName'])
+        user.append(rows[x]['UID'])
         unRatedUsers.append(user)
 
     return render_template('profile.html', profile = profile, unRatedUsers = unRatedUsers)

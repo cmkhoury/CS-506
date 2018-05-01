@@ -27,7 +27,10 @@ table {
     column-count: 2;
     column-gap: 20px;
   }
-
+  .main2 {
+     column-count: 1;
+     column-gap: 20px;
+  }
   section {
     break-inside: avoid;
   }
@@ -37,6 +40,9 @@ table {
   main {
      column-count: 3;
   }
+  /*.main2 {
+     column-count: 2;
+  }*/
 }
 
 :root {
@@ -53,6 +59,17 @@ main {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  padding-bottom: 0px;
+}
+ .main2{
+     max-width: 1200px;
+     margin: 0 auto;
+     padding-left: 20px;
+     padding-right: 20px;
+ }
+.col-sm-6 {
+    /*margin-left: 20px;*/
+    /*margin-right: 20px;*/
 }
 
 header {

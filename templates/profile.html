@@ -102,13 +102,15 @@
         </div> -->
     </header>
     <script>
-        function showModal(modal) {
+        function showModal(modal, userinfo) {
             if (modal=="name") { $('#nameModal').show()}
             else if (modal=="address") { $('#addressModal').show()}
             else if (modal=="contact") { $('#contactModal').show()}
             else if (modal=="rate") {
                 // $( "#rateModal h5" ).text( "hello" );
                 $('#rateModal').show()
+				$('.modal-footer').append("<button type='button' class='btn btn-primary' onClick='submitRating(\"" + userinfo[3] + ", " + {{profile['uid']}} + "\")'>Yes, match!</button>")
+                // console.log(userinfo[0], userinfo[1], userinfo[2], userinfo[3])
             }
             else if (modal=="cart") { $('#cartModal').show()}
             $('.wrapper').css("opacity", "0.20")
@@ -117,10 +119,16 @@
             $('.modal').hide()
             // $('#rateModal .modal-content').remove("h5")
             $('.wrapper').css("opacity", "1.0")
+			$("#matchModal .btn-primary").remove()
         }
         function clear(id) {
             $(id).removeClass('is-invalid')
             // $(id).val('')
+        }
+        function submitRating(theirID, myID) {
+            rating = $('#rateModal select').val()
+            console.log(theirID, myID, rating)
+
         }
         function editData(fields) {
             url = "/api/updateUser?"
@@ -287,7 +295,7 @@
                         </select>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onClick="closeModal()">Submit</button>
+                        <button type="button" class="btn btn-primary" onClick="submitRating()">Submit</button>
                     </div>
                 </div>
             </div>
@@ -297,7 +305,7 @@
         <div class="row">
             <div class="col-4">
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
-                    <div class="card-header" style="background-color: var(--darkorange); color: white">
+                    <div class="card-header" style="background-color: var(--navy2); color: white">
 
                         Past Matches:</div>
 
@@ -306,7 +314,7 @@
                             {% for user in unRatedUsers %}
                             <ol class="breadcrumb">
                               <li class="breadcrumb-item active">{{user[1]}} {{user[2]}}</li>
-                              <button type="button" id=ratebutton value="[{{user[0]}},{{user[1]}},{{user[2]}}]" class="btn btn-success" onClick="showModal('rate')" >Rate</button>
+                              <input type="button" id=ratebutton value="Rate" class="btn btn-success" onClick="showModal('rate', ['{{user[0]}}','{{user[1]}}','{{user[2]}}', '{{user[3]}}'])" ></input>
                             </ol>
                                 {% if loop.index % columns %}
                                     </div>
@@ -315,11 +323,9 @@
                             {% endfor %}
                         </div>
                 </div>
-                <div class="card bg-light mb-3" style="background-color: var(--light);">
-                    <div class="card-header" style="background-color: var(--teal1); color: white">
-
+                <div id="profile" class="card bg-light mb-3" style="background-color: var(--light);">
+                    <div class="card-header" style="background-color: var(--neutral); color: white">
                         <a href="#"><img id="pen" data-toggle="modal" src="{{ url_for('static',filename='images/edit.png') }}" width="15em" onclick="showModal('name')"/></a> Aliases:
-
                     </div>
                     <div class="card-body">
                             <div>
@@ -330,7 +336,7 @@
                             <strong>First Name</strong>: <span id='firstname_p'>{{profile['firstname']}}</span><br>
                         </div>
                         <div>
-                            <strong>Last Name</strong>: <span id="lastname_p"> {{profile['lastname']}}</span>
+                            <strong>Last Name</strong>: <span id="lastname_p">{{profile['lastname']}}</span>
                         </div>
                     </div>
                 </div>
@@ -351,7 +357,7 @@
                 </div>
                 <!-- <section> -->
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
-                    <div class="card-header" style="background-color: var(--orange2); color: white">
+                    <div class="card-header" style="background-color: var(--darkorange); color: white">
 
                         <a href="#"><img id="pen" src="{{ url_for('static',filename='images/edit.png') }}" width="15em" onclick="showModal('contact')"></a>Contact Information:</div>
                     <div class="card-body">
@@ -364,7 +370,7 @@
                             <div class="col-8">
                 <!-- <section> -->
                 <div class="card bg-light bg-6" style="background-color: var(--light);" ng-controller="ImportCartCtrl">
-                    <div class="card-header" style="background-color: var(--navy2); color: white">Your Current Carts:
+                    <div class="card-header" style="background-color: var(--orange2); color: white">Your Current Carts:
                     <button type="button" style="float: right; background-color: white; color: var(--darkblue); text-decoration: none" class="btn btn-secondary" onclick="showModal('cart')"><small>Import Carts</small></button>
                     </div>
                     <div class="card-body">
@@ -385,9 +391,33 @@
                                             <!-- </p> -->
                                         </p>
                                     </div>
-                                    <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: ${{'{{cart["total"]}}'}}</div>
+                                    <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: $89.36</div>
                                 </div>
                             </div>
+                            <div class="card-body">
+                                <div class="card border-secondary">
+                                    <div>
+                                        <h6 class="card-header" style="text-align:left;">ID #8
+                                          <span style="float:right;"></span>
+                                      </h6>
+                                    </div>
+
+                                    <div class="card-body">
+                                        <!-- <p class="card-text"> -->
+                                        <p style="text-align:left; margin-bottom: .5em">
+                                            Hallmark Mother's Day Greeting Card for Wife (My Beautiful Amazing Wife) (ID: 20):
+                                            <span style="float:right;">$5.00</span>
+                                            <!-- </p> -->
+                                        </p>
+                                        <p>
+                                        Udobuy The Love Between Mother and Daughter Is Forever Heart Charm Necklace (ID: 21):
+                                        <span style="float:right;">$9.99</span>
+                                    </p>
+                                    </div>
+                                    <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: $14.99</div>
+                                </div>
+                            </div>
+
                             <hr/>
                         </div>
                     </div>

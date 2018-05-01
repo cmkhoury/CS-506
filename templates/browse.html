@@ -151,10 +151,6 @@
 		    padding: 12px 16px;
 		    z-index: 1;
 		}
-
-		/*.dropdown:hover .dropdown-content {
-		    display: block;
-		}*/
 		.dropdown-item {
 			cursor: -webkit-grab;
 		    padding: 0px;
@@ -166,6 +162,66 @@
 		var state = '{{state}}'
 		var uid = '{{uid}}'
 		var userInformation
+		var rawData
+
+		//Ajax call:
+		async function control(limit) {
+			if (!limit) { limit = 500}
+
+			console.log( parseInt(limit))
+			await initMap()
+			$.ajax({
+				type: 'GET',
+				url: "/api/nearbyShoppers?state=" + '{{state}}' + "&&uid=" + '{{uid}}',
+				success: function(data) {
+					data = JSON.parse(data);
+					processPoints(data, parseInt(limit))
+					setButtons(data)
+					setInterval( function() { setButtons(data); }, 10000);
+				},
+				error: function(data) {
+					console.log("Error pulling addresses from database via cartCombo_app.py and ajax call\n")
+				}
+			});
+		}
+
+		function setButtons(rawData) {
+			for(var i = 0; i < rawData.length; i++) {
+				$.ajax({
+					type: 'GET',
+					url: "/api/determineStatus?otherID=" + rawData[i]['uid'],
+					success: function(data) { // Response about a single UID2 status
+						console.log(data)
+						data = JSON.parse(data)
+						if (data[0]) { //data[0] should be undefined for users who aren't in prematch table.  Within IF clause addresses only those whose buttons need special treatment
+							button = ".cardpane #user_" + data[0].uid2 + " #ratebutton"
+							console.log(data[0])
+							if (data[0].status1 == 1) {
+								if (data[0].status2 == 1) {
+									// console.log(data[0].uid2, "--> Accepted")
+									$(button).attr("class", "btn-info")
+									$(button).text("Match Accepted")
+								} else {
+									// console.log(data[0].uid2, " --> Pending")
+									$(button).attr("class", "btn-secondary")
+									$(button).text("Match Pending")
+								}
+								$(button).attr("disabled", "disabled")
+							}
+						}
+						else { //Reset default button behavior if not in premath table
+							button = ".cardpane #user_" + data + " #ratebutton"
+							$(button).attr('enabled', 'enabled')
+							$(button).attr("class", "btn-success")
+							$(button).text("Match")
+						}
+					},
+					error: function(data) {
+						console.log("Error pulling addresses from database via cartCombo_app.py and ajax call\n")
+					}
+				});
+			}
+		}
 
 		// function startSpinningWheel() {
 		//     setTimeout(control, 0);
@@ -178,7 +234,7 @@
 				$('.modal-footer').append("<button type='button' class='btn btn-primary' onClick='submitMatch(\"" + id + "\")'>Yes, match!</button>")
 				$("<div class='modal-body'>This will send an email to " + name + " with your match request.  Click below to continue.</div>").insertAfter(".modal-header")
 				$('#wrapper1').css("opacity", "0.20")
-
+				$('nav').css("opacity", "0.20")
 			}
 		}
 
@@ -188,29 +244,25 @@
 			// $('#rateModal .modal-content').remove("h5")
 			$("#matchModal .btn-primary").remove()
 			$('#wrapper1').css("opacity", "1.0")
+			$('nav').css("opacity", "1.0")
 		}
 
 		function submitMatch(otherID) {
 			console.log("my ID: ", {{uid}}, "other ID: ", otherID)
-			closeModal();
-		}
-
-		//Ajax call:
-		async function control(limit) {
-			if (!limit) { limit = 500}
-
-			console.log( parseInt(limit))
-			await initMap()
 			$.ajax({
 				type: 'GET',
-				url: "/api/nearbyShoppers?state=" + '{{state}}' + "&&uid=" + '{{uid}}',
+				url: "/api/createMatch?otherID=" + otherID,
 				success: function(data) {
-					processPoints(data, parseInt(limit))
+					console.log("match successful between {{uid}} and ", otherID)
+					$(".cardpane #user_" + otherID + " #ratebutton").attr("disabled", "disabled")
+					$(".cardpane #user_" + otherID + " #ratebutton").attr("class", "btn-secondary")
+					$(".cardpane #user_" + otherID + " #ratebutton").text("Match Pending")
 				},
 				error: function(data) {
 					console.log("Error pulling addresses from database via cartCombo_app.py and ajax call\n")
 				}
 			});
+			closeModal();
 		}
 
 		function calculateDistances(origins,destinations, i, limit) {
@@ -233,10 +285,7 @@
 
 		function processPoints(rawData, limit) {
 			var complete = false;
-			rawData = JSON.parse(rawData);
 			distance = "originalvalue"; window.i=0;
-			// window.distance = distance;
-
 			var marker = null;
 			var infowindow = new google.maps.InfoWindow();
 
@@ -244,8 +293,6 @@
 				//Small check to skip null coordinates (with the case of fake addresses)
 				if (rawData[i]['lat'] == null) { continue; }
 				$(".card").remove()
-				// var service =  new google.maps.DistanceMatrixService();
-				// service.getDistanceMatrix({
 				var origins = {lat: {{lat}}, lng: {{lon}}}
 				var destinations = {lat: rawData[i]['lat'], lng: rawData[i]['lon']}
 
@@ -258,11 +305,9 @@
 		                    for (var l = 0; l < results.length; l++) {
 		                       distance = results[l].distance.text;
 							   time = results[l].duration.text;
-								console.log(distance, time)
-								// window.distance = distance;
-		                        // document.getElementById('result').innerHTML += results[j].distance.text;
 		                    }
 		                }
+
 						numDistance = parseFloat(distance.split(" ")[0])
 						console.log(parseFloat(distance.split(" ")[0]), limit)
 
@@ -281,7 +326,6 @@
 
 							// "<h class=\"card-subtitle mb-2 text-muted\">Card subtitle</h6>" +
 
-
 							var table = "<table class='table'>" +
 										"<thead>" +
 										"<tr>" + rawData[i]['firstname'] + "'s Cart</tr>" +
@@ -296,8 +340,7 @@
 										"</tbody></table>"
 
 							var extracontent = "<div id='extracontent'>" +
-												table +
-												"<button type='button' id=ratebutton class='btn btn-success' onClick='showModal(\"match\", \"" + rawData[i]['uid'] + "\", \"" + rawData[i]['firstname'] + "\")'>Match with " + rawData[i]['firstname'] +"</button>" +
+												"<button type='button' id=ratebutton class='btn btn-success' onClick='showModal(\"match\", \"" + rawData[i]['uid'] + "\", \"" + rawData[i]['firstname'] + "\")'>Match</button>" +
 												// "<a href=\"#\" class=\"card-link\">Card link</a>" +
 												// "<a href=\"#\" class=\"card-link\">Another link</a>" +
 												"</div>"
@@ -320,7 +363,6 @@
 							});
 
 							google.maps.event.addListener(card, 'click', function() {
-								console.log("did it even get here")
 							   map.setCenter({lat: rawData[i]['lat'], lng: rawData[i]['lng'] });
 							   infowindow.setContent(contentStringRdr);
 							   infowindow.open(map,RdrMarker);
@@ -344,29 +386,22 @@
 
 								infowindow.setContent(this.info);
 								infowindow.open(map, this);
-								// console.log(this.title)
+
 								downthepage = $(card).position().top;
-								// console.log(downthepage)
-								$("#content1").scrollTop(downthepage-$(window).height()*.1)
-								// console.log(top)
-								// $("#content1").animate({
-								// 		'scrollTop' : $("#" + this.title).position().top
-								// }, 'fast');
+								$("#content1").scrollTop(downthepage-$(window).height()*.3)
 								$(card).css("border","2px solid var(--teal2)")
 								$(extracontent).show(50)
 								$(".card #extracontent").not(extracontent).css("display","none")
 								$(".card").not(card).css("border","1px solid rgba(0, 0, 0, 0.125)")
 							});
-
-							$("#loader").remove();
-							$("#loader-wrapper").remove();
+							// $("#loader").remove();
+							// $("#loader-wrapper").remove();
 					}
 
 		           })
 		           .fail(function(status){
 		              console.log('An error occured. Status: ' + status);
 		           });
-
 			}
 		}
 
@@ -379,6 +414,7 @@
 
 		function cardclick(lat, long, id) {
 			expand(id)
+			console.log(id)
 	        var latLng = new google.maps.LatLng(lat, long);
 	        map.panTo(latLng);
 	    }
@@ -470,9 +506,7 @@
 		<div>
 	</nav>
 	<div id="wrapper1">
-		<div id="content1">
-			<!-- First: the user themselves: UID: {{uid}}, State: {{state}} -->
-			<p id="firstuser"></p>
+		<div class="cardpane" id="content1">
 		</div>
 		<div id="sidebar1">
 			<div id="map"></div>
