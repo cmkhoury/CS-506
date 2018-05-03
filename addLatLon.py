@@ -14,7 +14,7 @@ def main():
             curs = con.cursor()
             session_requests = requests.session()
 
-            query = "SELECT * FROM User WHERE UID = 692"
+            query = "SELECT * FROM User WHERE UID > 100"
             missingLatLon = con.execute(query)
             for row in missingLatLon:
                 # 1, None, ckhoury, password, ckhoury@wisc.ed, 44 Clay Street, Yonkers, New York, 10701, Cam, Khoury, None, None, None)
@@ -22,7 +22,7 @@ def main():
                 # print(address)
                 apiKEY = "AIzaSyBRx7Cu0K1yT5nS9qZFiSbRaQZpPxz_9wk"
                 call = "".join(["https://maps.googleapis.com/maps/api/geocode/json?address=", address, "&key=", apiKEY])
-                # print(call)
+                print(call)
                 response = requests.get(call)
                 json_data = response.json()
 

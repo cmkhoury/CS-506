@@ -10,6 +10,7 @@ import requests
 import re
 import time
 from lxml import html
+from flask import Markup
 
 
 app = Flask(__name__)
@@ -226,7 +227,29 @@ def determineStatus():
         pair["status2"] = rows[x]['status2'];
         result.append(pair)
     return json.dumps(result);
-
+#
+# @app.route('/api/getMatches')
+# def getMatches():
+#
+#
+#     con = sql.connect(db)
+#     con.row_factory = sql.Row
+#     cur = con.cursor()
+#     uid = request.args.get('otherID');
+#     query1 = "SELECT * FROM PreMatch WHERE (UID1 = " + str(UID) + ") OR (UID2 = " + str(UID) + ")"
+#
+#     cur.execute(query1)
+#     rows = cur.fetchall()
+#     if len(rows) < 1 : return otherID
+#     result = []
+#     for x in range(0, len(rows)):
+#         pair = dict()
+#         pair["uid1"] = rows[x]['UID1'];
+#         pair["uid2"] = rows[x]['UID2'];
+#         pair["status1"] = rows[x]['status1'];
+#         pair["status2"] = rows[x]['status2'];
+#         result.append(pair)
+#     return json.dumps(result);
 
 @app.route('/acceptMatch')
 def acceptMatch():
@@ -282,26 +305,11 @@ def profile():
     profile['state'] = rows[0]['State']
     profile['zip'] = rows[0]['zip']
 
-    query = "SELECT Cart.CID AS 'CartID',Cart.Total AS 'Total',Item.Description AS 'Description',Item.IID AS 'ItemID',Item.Price AS 'Price', Item.Quantity AS 'Quantity' FROM Cart INNER JOIN CartItem ON Cart.CID = CartItem.CID INNER JOIN Item ON CartItem.IID = Item.IID WHERE UID = \'" + str(UID) + "\'"
-    cur.execute(query)
-    rows = cur.fetchall()
+    # query = "SELECT Cart.CID AS 'CartID',Cart.Total AS 'Total',Item.Description AS 'Description',Item.IID AS 'ItemID',Item.Price AS 'Price', Item.Quantity AS 'Quantity' FROM Cart INNER JOIN CartItem ON Cart.CID = CartItem.CID INNER JOIN Item ON CartItem.IID = Item.IID WHERE UID = \'" + str(UID) + "\'"
+    # cur.execute(query)
+    # rows = cur.fetchall()
 
-    listOfCarts = [];
-    listofItems = [];
     unRatedUsers = [];
-
-    for x in range(0, len(rows)):
-      cart = dict()
-      cart['cartID'] = rows[x]['CartID']
-      cart['total'] = rows[x]['total']
-      if(cart not in listOfCarts): listOfCarts.append(cart)
-      item = dict()
-      item['cartID'] = rows[x]['CartID']
-      item['itemID'] = rows[x]['ItemID']
-      item['price'] = rows[x]['Price']
-      item['description'] = rows[x]['Description']
-      item['quantity'] = rows[x]['Quantity']
-      if(item not in listofItems): listofItems.append(item)
 
     number = 10;
     query = "SELECT * FROM User WHERE UID < \'" + str(number) + "\'"
@@ -316,8 +324,11 @@ def profile():
         user.append(rows[x]['UID'])
         unRatedUsers.append(user)
 
-    return render_template('profile.html', profile = profile, unRatedUsers = unRatedUsers)
 
+
+    # pendingMatches = json.dumps(result);
+    # print(result)
+    return render_template('profile.html', profile = profile, unRatedUsers = unRatedUsers)
 
 @app.route('/addUser', methods = ['POST', 'GET'])
 def new_user():
@@ -573,6 +584,31 @@ def searchCart_api():
   results = [listOfCarts, listofItems]
   return json.dumps(results)
 
+@app.route('/api/getCurrentMatches')
+def currentMatches():
+  con = sql.connect(db)
+  con.row_factory = sql.Row
+  cur = con.cursor()
+
+  query = "SELECT User.FirstName AS 'firstname', User.LastName AS 'lastname', Prematch.UID1 AS 'UID1', Prematch.UID2 AS 'UID2', Prematch.STATUS1 AS 'status1', Prematch.STATUS2 AS 'status2' FROM User INNER JOIN Prematch ON User.UID = Prematch.UID2 WHERE UID1 = \'" + str(UID) + "\'"
+
+  cur.execute(query)
+  rows = cur.fetchall()
+
+  listOfMatches = []
+  for x in range(0, len(rows)):
+    pair = dict()
+    pair["uid1"] = rows[x]['UID1'];
+    pair["uid2"] = rows[x]['UID2'];
+    pair["status1"] = rows[x]['status1'];
+    pair["status2"] = rows[x]['status2'];
+    pair["firstname"] = rows[x]['firstname'];
+    pair["lastname"] = rows[x]['lastname'];
+    listOfMatches.append(pair)
+
+  results = listOfMatches
+  print(results)
+  return json.dumps(results)
 
 @app.route('/api/hasUsername') #?username = "XXX"
 def hasUsername_api():
