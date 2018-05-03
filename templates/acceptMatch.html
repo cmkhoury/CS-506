@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<style>
+	body {
+		align:center;
+		margin:5%;
+		}
+	</style>
+	<script>
+		$(document).ready(function(){
+
+			setTimeout(
+			  function()
+			  {
+			    $(location).attr('href', "http://127.0.0.1:5000/")
+			  }, 3000);
+		})
+	</script>
+</head>
+
+<body style="padding:150px">
+	<div class="panel panel-default">
+  <div class="panel-heading">
+    <h1 class="panel-title" style="font-size:30pt">Message</h1>
+  </div>
+  <div class="panel-body" style="font-size:20pt">
+    You have accepted the match, and your page will be redirected to the homepage after 3 seconds! Or click <a href="http://127.0.0.1:5000/">here</a> to go back to the home page. 
+  </div>
+</div>
+</body>
+
+</html>

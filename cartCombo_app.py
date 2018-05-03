@@ -280,7 +280,7 @@ def acceptMatch():
         cur.execute(query2)
         con.commit();
         # query3 = "UPDATE PreMatch   WHERE (UID1 = " + str(UID) + " AND UID2 = " + str(otherID) + ") OR (UID1 = " + str(otherID) + " AND UID2 = " + str(UID) + ")"
-        return "match succesful: UID: " + UID + " UID2: " + otherID + " both accepted"
+        return render_template('acceptMatch.html')
 
 
 @app.route('/profile')
