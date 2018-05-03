@@ -1,0 +1,51 @@
+<html ng-app="CombineCartApp">
+	<head>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+		<script src="{{ url_for('static',filename='js/combineCart.js') }}"></script>
+	</head>
+	<body style="padding:20px;" ng-controller="MainCtrl">
+		<div class="panel panel-default" ng-repeat="user in matchedUsers">
+		  <div class="panel-heading" >
+		    <h3 class="panel-title">Matched with user {{"{{user.firstname}}"}} {{"{{user.lastname}}"}} - {{"{{user.uid}}"}}</h3>
+		  </div>
+		  <div class="panel-body" style="padding:20px">
+		    <div class="rows">
+		    	<div class="col-md-6">
+		    		<table class="table">
+		    			<tr>
+		    				<th>Item Name</th>
+		    				<th>Price</th>
+		    			</tr>
+							<tr ng-repeat="item in listOfItems" ng-show="item.uid == currUserId">
+								<td>{{"{{item.description}}"}}</td>
+		    				<td>${{"{{item.price}}"}}</td>
+		    			</tr>
+  					</table>
+		    	</div>
+		    	<div class="col-md-6" style="border-left: 2px dashed grey;">
+		    				    		<table class="table">
+		    			<tr>
+								<th>UID</th>
+		    				<th>Item Name</th>
+		    				<th>Price</th>
+		    			</tr>
+							<tr ng-repeat="item in listOfItems" ng-show="item.uid == user.uid">
+								<td>{{"{{item.uid}}"}}</td>
+								<td>{{"{{item.description}}"}}</td>
+		    				<td>${{"{{item.price}}"}}</td>
+		    			</tr>
+
+		    			</tr>
+  					</table>
+		    	</div>
+
+		    </div>
+		    <button class="btn btn-danger" ng-click="cartCombination(user.cartID)">Combine</button>
+		  </div>
+		</div>
+
+	</body>
+</html>

@@ -9,6 +9,7 @@ import json
 import requests
 import re
 import time
+import smtplib
 from lxml import html
 
 
@@ -97,7 +98,6 @@ def updateUser():
         return "FINALLY"
 
 
-
 @app.route('/map')
 def map():
     if not session.get('logged_in'):
@@ -126,6 +126,7 @@ def nearbyShoppers():
     query2 = "SELECT * FROM User WHERE UID = \'" + str(uid) + "\'"
 
     cur.execute(query1 + " EXCEPT " + query2)
+    print query1 + " EXCEPT " + query2
     rows = cur.fetchall()
     results = list()
     for x in range(0, len(rows)):
@@ -176,20 +177,24 @@ def createMatch():
     query2 = "INSERT INTO PreMatch (UID1, UID2, STATUS1, STATUS2, Cost, Threshold) VALUES (" + str(UID) + ", " + str(otherID) + ", 1, 0, 0, 0 )"
     cur.execute(query2)
     con.commit();
-    # //write an email with http://127.0.0.1:5000/acceptMatch?uid1=&&uid2=
+    #//write an email with http://127.0.0.1:5000/acceptMatch?uid1=&&uid2=
 
-    # sender = "ShippingPartnerFinder@gmail.com"
-    # query3 = "SELECT Email FROM User WHERE UID = \'" + str(otherID) + "\'"
-    # cur.execute(query3)
-    # receiver = cur.fetchall()[0][0]
-    #
-    # s = smtplib.SMTP('smtp.gmail.com',587)
-    # s.ehlo()
-    # s.starttls()
-    # s.login("ShippingPartnerFinder@gmail.com", "ShippingPartnerFinderPassword")
-    # msg = "\r\n".join(["From: "+sender,"To: "+receiver,"Subject: [CartCombo]You have a matching request!","","Hello,\n Someone want to be your shipping partner!\n You can contact with him/her by "+sender+" or check our website and merge your carts!\n"])
-    # s.sendmail("ShippingPartnerFinder@gmail.com", receiver, msg)
-    # s.quit()
+    sender = "ShippingPartnerFinder@gmail.com"
+    query3 = "SELECT Email FROM User WHERE UID = \'" + str(otherID) + "\'"
+    cur.execute(query3)
+    receiver = cur.fetchall()[0][0]
+    print receiver
+
+    uriStr = "http://127.0.0.1:5000/acceptMatch?uid1="+ str(UID) + "&&uid2=" + str(otherID)
+
+    s = smtplib.SMTP('smtp.gmail.com',587)
+    s.ehlo()
+    s.starttls()
+    s.login("ShippingPartnerFinder@gmail.com", "ShippingPartnerFinderPassword")
+    msg = "\r\n".join(["From: "+sender,"To: "+receiver,"Subject: [CartCombo]You have a matching request!","", "Hello,\n Someone want to be your shipping partner!\n You can contact with him/her by "+sender+" or check our website and merge your carts!\n"
+    + "CLick <a href=\""+ uriStr +"\">here</a> to accept"])
+    s.sendmail("ShippingPartnerFinder@gmail.com", receiver, msg)
+    s.quit()
     return "success"
 
 @app.route('/api/determineStatus')
@@ -346,8 +351,18 @@ def wishlist():
 
     with sql.connect(db) as con:
         cur = con.cursor()
+        cur.execute("SELECT CID from Cart WHERE UID = '"+ str(UID)+"'")
+        cartID = cur.fetchall()[0][0]
+        query = "DELETE from Cart WHERE UID = '"+ str(UID)+"'"
+        cur.execute(query)
+        print(query)
+        con.commit()
+        query = "DELETE from CartItem WHERE CID = '" +str(cartID) +"'"
+        cur.execute(query)
+        print(query)
+        con.commit()
         cur.execute("INSERT INTO Cart (UID) VALUES ('" + str(UID) + "')")
-        #cur.commit()
+        con.commit()
         cur.execute("SELECT last_insert_rowid()")
         cartID = cur.fetchall()[0][0]
         print(cartID)
@@ -516,6 +531,10 @@ def logout():
 def searchPartner():
   return render_template("searchPartner.html")
 
+@app.route('/combineCart')
+def combineCart():
+   return render_template("combineCart.html")
+
 @app.route('/api/searchPartner') #?name = "XXX"
 def searchPartner_api():
 
@@ -573,6 +592,84 @@ def searchCart_api():
   results = [listOfCarts, listofItems]
   return json.dumps(results)
 
+@app.route('/api/searchMatches')
+def searchMatches_api():
+    con = sql.connect(db)
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    query = "SELECT User.UID, Username, FirstName, LastName, email, CID FROM PreMatch INNER JOIN User ON UID2 = User.UID INNER JOIN Cart ON UID2 = Cart.UID WHERE UID1 = '" + str(UID) + "' AND Status1 = 1 AND Status2 = 1 "
+    cur.execute(query)
+    print query
+    rows = cur.fetchall()
+
+    users = []
+    for x in range(0, len(rows)):
+      user = dict()
+      user['uid'] = rows[x][0]
+      user['username']= rows[x][1]
+      user['firstname']= rows[x][2]
+      user['lastname']= rows[x][3]
+      user['email']= rows[x][4]
+      user['cartID'] = rows[x][5]
+      users.append(user)
+
+    query = "SELECT Cart.UID AS 'UID', Cart.CID AS 'CartID',Cart.Total AS 'Total',Item.Description AS 'Description',Item.IID AS 'ItemID',Item.Price AS 'Price', Item.Quantity AS 'Quantity' FROM Cart INNER JOIN CartItem ON Cart.CID = CartItem.CID INNER JOIN Item ON CartItem.IID = Item.IID"
+    print query
+    cur.execute(query)
+    rows = cur.fetchall()
+
+    listofItems = [];
+
+    for x in range(0, len(rows)):
+      item = dict()
+      item['cartID'] = rows[x]['CartID']
+      item['itemID'] = rows[x]['ItemID']
+      item['price'] = rows[x]['Price']
+      item['description'] = rows[x]['Description']
+      item['quantity'] = rows[x]['Quantity']
+      item['uid'] = rows[x]['UID']
+      listofItems.append(item)
+    results = [users, listofItems, str(UID)]
+    return json.dumps(results)
+
+@app.route('/api/cartCombination')
+def cartCombination_api():
+    con = sql.connect(db)
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    cart1Id = request.args.get('cart1Id')
+    cart2Id = request.args.get('cart2Id')
+
+    query = "UPDATE CartItem SET CID=" + cart1Id + " WHERE CID = " + cart2Id+ ""
+    print query
+    cur.execute(query)
+    con.commit()
+    return "success"
+@app.route('/api/searchCartFromUserID')
+def searchCartFromUserID_api():
+
+  con = sql.connect(db)
+  con.row_factory = sql.Row
+  cur = con.cursor()
+  userId= request.args.get('userID');
+
+  query = "SELECT Cart.CID AS 'CartID',Cart.Total AS 'Total',Item.Description AS 'Description',Item.IID AS 'ItemID',Item.Price AS 'Price', Item.Quantity AS 'Quantity' FROM Cart INNER JOIN CartItem ON Cart.CID = CartItem.CID INNER JOIN Item ON CartItem.IID = Item.IID WHERE UID = \'" + str(userId) + "\'"
+  print query
+  cur.execute(query)
+  rows = cur.fetchall()
+
+  listofItems = [];
+
+  for x in range(0, len(rows)):
+    item = dict()
+    item['cartID'] = rows[x]['CartID']
+    item['itemID'] = rows[x]['ItemID']
+    item['price'] = rows[x]['Price']
+    item['description'] = rows[x]['Description']
+    item['quantity'] = rows[x]['Quantity']
+    if(item not in listofItems): listofItems.append(item)
+
+  return json.dumps(listofItems)
 
 @app.route('/api/hasUsername') #?username = "XXX"
 def hasUsername_api():

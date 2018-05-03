@@ -170,6 +170,7 @@
 
 			console.log( parseInt(limit))
 			await initMap()
+			console.log("/api/nearbyShoppers?state=" + '{{state}}' + "&&uid=" + '{{uid}}')
 			$.ajax({
 				type: 'GET',
 				url: "/api/nearbyShoppers?state=" + '{{state}}' + "&&uid=" + '{{uid}}',
