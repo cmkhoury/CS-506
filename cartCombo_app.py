@@ -363,15 +363,17 @@ def wishlist():
     with sql.connect(db) as con:
         cur = con.cursor()
         cur.execute("SELECT CID from Cart WHERE UID = '"+ str(UID)+"'")
-        cartID = cur.fetchall()[0][0]
-        query = "DELETE from Cart WHERE UID = '"+ str(UID)+"'"
-        cur.execute(query)
-        print(query)
-        con.commit()
-        query = "DELETE from CartItem WHERE CID = '" +str(cartID) +"'"
-        cur.execute(query)
-        print(query)
-        con.commit()
+        rows = cur.fetchall()
+        if(len(rows) != 0):
+            cartID = rows[0][0]
+            query = "DELETE from Cart WHERE UID = '"+ str(UID)+"'"
+            cur.execute(query)
+            print(query)
+            con.commit()
+            query = "DELETE from CartItem WHERE CID = '" +str(cartID) +"'"
+            cur.execute(query)
+            print(query)
+            con.commit()
         cur.execute("INSERT INTO Cart (UID) VALUES ('" + str(UID) + "')")
         con.commit()
         cur.execute("SELECT last_insert_rowid()")
@@ -656,7 +658,7 @@ def cartCombination_api():
     cur.execute(query)
     con.commit()
     return "success"
-    
+
 @app.route('/api/searchCartFromUserID')
 def searchCartFromUserID_api():
 

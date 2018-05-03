@@ -57,7 +57,7 @@
         #pen {
             margin-right:.5em;
         }
-        #ratebutton {
+        #ratebutton, #matchbutton {
             /*position: absolute;*/
             /*right: 25px;*/
             border-radius: 4px;
@@ -66,6 +66,22 @@
             padding-top: 2px;
             padding-bottom: 2px;
             margin-left: 10px;
+            font-size: .875em;
+        }
+        #ratebutton{
+            background-color: var(--navy2);
+            border-color: var(--navy1);
+            /*border-width:1.5px;*/
+        }
+        #ratebutton:hover {
+            color: #fff;
+            background-color: var(--navy1);
+            border-color: var(--navy1)
+        }
+
+        #ratebutton:focus, #ratebutton.focus {
+            -webkit-box-shadow: 0 0 0 0.2rem var(--navy1);
+            box-shadow: 0 0 0 0.2rem var(--navy1)
         }
         #matches {
             margin-left: 0px;
@@ -102,24 +118,100 @@
         </div> -->
     </header>
     <script>
+        // window.onload = control;
+
+        // //Ajax call:
+        // function control() {
+        //     console.log({{listOfMatches}})
+        // }
+        $(document).ready(function() {
+            setButtons()
+            setInterval( function() { setButtons(); }, 5000);
+        });
+
+        function setButtons() {
+            $.ajax({
+                type: 'GET',
+                url: "/api/getCurrentMatches",
+                success: function(matchStatus) {
+                    matchStatus = JSON.parse(matchStatus);
+                    for(var i = 0; i < matchStatus.length; i++) {
+                        console.log(matchStatus[i].uid2, matchStatus[i].status2)
+        				button = "#current_" + matchStatus[i].uid2 + " #matchbutton"
+                        if (matchStatus[i].status1 == 1 && matchStatus[i].status2 == 1) {
+                                $(button).attr("class", "btn-info")
+                                $(button).val("Accepted")
+                                $(button).attr("disabled", "disabled")
+                        }
+                        else { //Reset default button behavior if not in premath table
+                                            // console.log(matchStatus[i].uid2, matchStatus[i].status2)
+                            // button = "button #matchbutton"
+                            // console.log("getting here")
+                            $(button).removeAttr("disabled")
+                            $(button).attr("class", "btn-success")
+                            $(button).val("Match")
+                        }
+                    }
+                },
+                error: function(data) {
+                    console.log("Error pulling addresses from database via cartCombo_app.py and ajax call\n")
+                }
+            });
+        }
+
+        function acceptMatch(type, user) {
+            console.log(user[0], user[1], user[2], user[3])
+            $.ajax({
+                type: 'GET',
+                url: "/acceptMatch?uid1=" + user[2] + "&&uid2=" + user[3],
+                success: function(data) {
+                    console.log("match successful between " + user[2] + " and " + user[3])
+                    // $(".cardpane #user_" + otherID + " #ratebutton").attr("disabled", "disabled")
+                    // $(".cardpane #user_" + otherID + " #ratebutton").attr("class", "btn-secondary")
+                    // $(".cardpane #user_" + otherID + " #ratebutton").text("Match Pending")
+                },
+                error: function(data) {
+                    console.log("Error pulling addresses from database via cartCombo_app.py and ajax call\n")
+                }
+            });
+            closeModal(type, user);
+        }
+
         function showModal(modal, userinfo) {
+            console.log(modal, userinfo)
             if (modal=="name") { $('#nameModal').show()}
-            else if (modal=="address") { $('#addressModal').show()}
-            else if (modal=="contact") { $('#contactModal').show()}
+            else if (modal=="address") { $('#addressModal').show() }
+            // else if (modal=="address") { $('#addressModal').show() }
+            else if (modal=="match") {
+                console.log(userinfo)
+                $('#matchModal').show()
+				$('.modal-header').append("<button type='button' class='close' data-dismiss='modal' onClick='acceptMatch(\"match\", [" + userinfo['status1'] + ", " + userinfo['status2'] + ", " + userinfo['uid1'] + ", " + userinfo['uid2'] + "])' aria-label='Close'><span aria-hidden='true'>&times;</span></button>")
+
+            }
+            else if (modal=="contact") { $('#contactModal').show() }
             else if (modal=="rate") {
                 // $( "#rateModal h5" ).text( "hello" );
                 $('#rateModal').show()
-				$('.modal-footer').append("<button type='button' class='btn btn-primary' onClick='submitRating(\"" + userinfo[3] + ", " + {{profile['uid']}} + "\")'>Yes, match!</button>")
+				$('.modal-footer').append("<button type='button' class='btn btn-primary' onClick='submitRating(\"" + userinfo[3] + ", " + {{profile['uid']}} + "\")'>Submit Rating</button>")
                 // console.log(userinfo[0], userinfo[1], userinfo[2], userinfo[3])
             }
             else if (modal=="cart") { $('#cartModal').show()}
             $('.wrapper').css("opacity", "0.20")
         }
-        function closeModal() {
+        function closeModal(type, username) {
+            if (type=="match") {
+                console.log("username:", username[3])
+
+                button = "#current_" + username[3] + " #matchbutton"
+                $(button).attr("class", "btn-info")
+                $(button).val("Accepted")
+                $(button).attr("disabled", "disabled")
+            }
             $('.modal').hide()
-            // $('#rateModal .modal-content').remove("h5")
+            $('#rateModal .modal-content').remove("button")
             $('.wrapper').css("opacity", "1.0")
-			$("#matchModal .btn-primary").remove()
+			$("#rateModal .btn-primary").remove()
+			$("#matchModal .close").remove()
         }
         function clear(id) {
             $(id).removeClass('is-invalid')
@@ -252,8 +344,18 @@
                 </div>
             </div>
         </div>
+        <!-- SUCCESSFUL MATCH MODAL -->
+        <div class="modal" id="matchModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">Match Successful!
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         <!-- CART ADD MODAL -->
+
     <div class="modal" id="cartModal" ng-controller="ImportCartCtrl">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -277,33 +379,33 @@
 
     <!-- Rate MODAL -->
     <div class="modal" id="rateModal">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-<h5> Rating User: </h5>
-                        <button type="button" class="close" data-dismiss="modal"  onClick="closeModal()" aria-label="Close">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5> Rating User: </h5>
+                <button type="button" class="close" data-dismiss="modal" onClick="closeModal()" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-                    </div>
-                    <div class="modal-body">
-                        <select id="example" style="width: 100px">
+            </div>
+            <div class="modal-body">
+                <select id="example" style="width: 100px">
                           <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
                           <option value="4">4</option>
                           <option value="5">5</option>
                         </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onClick="submitRating()">Submit</button>
-                    </div>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-primary" onClick="submitRating()">Submit</button> -->
             </div>
         </div>
+    </div>
+</div>
 
     <div class="wrapper" style="margin-top: 20px">
         <div class="row">
-            <div class="col-4">
+            <div class="col-5">
                 <div class="card bg-light mb-3" style="background-color: var(--light);">
                     <div class="card-header" style="background-color: var(--navy2); color: white">
 
@@ -312,7 +414,7 @@
                         {% set columns = 1 %}
                         <div class="row" id="matches">
                             {% for user in unRatedUsers %}
-                            <ol class="breadcrumb">
+                            <ol class="breadcrumb" id="past_{{user[0]}}">
                               <li class="breadcrumb-item active">{{user[1]}} {{user[2]}}</li>
                               <input type="button" id=ratebutton value="Rate" class="btn btn-success" onClick="showModal('rate', ['{{user[0]}}','{{user[1]}}','{{user[2]}}', '{{user[3]}}'])" ></input>
                             </ol>
@@ -367,12 +469,29 @@
                 </div>
             </div>
                             <!-- </section> -->
-                            <div class="col-8">
+                <div class="col-7">
                 <!-- <section> -->
+                <div class="card bg-light mb-3" style="background-color: var(--light);" ng-controller="ImportMatchCtrl">
+                    <div class="card-header" style="background-color: var(--teal1); color: white">
+
+                        Pending and Current Matches:</div>
+
+                        <div class="row" id="matches">
+
+                            <ol class="breadcrumb" id="current_{{'{{ match["uid2"]}}'}}" ng-repeat="match in listOfMatches" >
+                              <li class="breadcrumb-item active">{{'{{ match["firstname"]}}'}} {{'{{ match["lastname"]}}'}}</li>
+                              <input type="button" id=matchbutton value="Match" class="btn btn-success" ng-click="showModal('match', match)" ></input>
+                            </ol>
+                                    </div>
+                                    <div class="row" id="matches">
+                        </div>
+                </div>
+
                 <div class="card bg-light bg-6" style="background-color: var(--light);" ng-controller="ImportCartCtrl">
                     <div class="card-header" style="background-color: var(--orange2); color: white">Your Current Carts:
                     <button type="button" style="float: right; background-color: white; color: var(--darkblue); text-decoration: none" class="btn btn-secondary" onclick="showModal('cart')"><small>Import Carts</small></button>
                     </div>
+
                     <div class="card-body">
                         <div class="row">
                             <div class="card-body" ng-repeat="cart in listOfCarts">
@@ -394,8 +513,6 @@
                                     <div class="card-footer" href="#" class="info-link" style="text-align: right; padding-right: 20px">Total: $89.36</div>
                                 </div>
                             </div>
-                          
-
                             <hr/>
                         </div>
                     </div>
